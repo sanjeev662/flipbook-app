@@ -28,17 +28,23 @@ export default function Footer({
   };
 
   const iconBtn =
-    'w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center rounded text-white/60 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]';
+    'w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center rounded text-gray-600 hover:text-gray-800 hover:bg-black/5 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]';
 
   return (
     <footer
       className="flex items-center justify-between px-2 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 min-h-[40px] sm:min-h-[44px] md:min-h-[48px] gap-1.5 sm:gap-2 md:gap-3 z-30 relative shrink-0"
-      style={{ background: '#1e1e1e', borderTop: '1px solid rgba(255,255,255,0.08)', paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom, 0.375rem))' }}
+      style={{
+        background: 'rgba(255, 255, 255, 0.55)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderTop: '1px solid rgba(0, 0, 0, 0.06)',
+        paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom, 0.375rem))',
+      }}
     >
       {/* Page range left */}
       <div
-        className="text-[10px] xs:text-[11px] sm:text-xs font-medium shrink-0 tabular-nums"
-        style={{ color: 'rgba(255,255,255,0.75)', minWidth: '52px' }}
+        className="text-[10px] xs:text-[11px] sm:text-xs font-medium shrink-0 tabular-nums text-gray-700"
+        style={{ minWidth: '52px' }}
       >
         {pageRangeText}
       </div>
@@ -52,7 +58,7 @@ export default function Footer({
           value={currentPage}
           onChange={handleSliderChange}
           disabled={!totalPages || totalPages <= 1}
-          className="w-full dark-slider"
+          className="w-full light-slider"
           aria-label="Page slider"
         />
       </div>

@@ -300,13 +300,13 @@ export default function FlipBook({
   if (initError && !imageUrls.length) {
     return (
       <motion.div
-        className="flex flex-col items-center justify-center p-8 rounded-2xl text-white/80"
+        className="flex flex-col items-center justify-center p-8 rounded-2xl text-gray-700"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <p className="text-lg font-medium mb-2 text-white">Failed to load flipbook</p>
-        <p className="text-sm opacity-70">{initError}</p>
-        <p className="text-xs mt-4 opacity-50">
+        <p className="text-lg font-medium mb-2 text-gray-800">Failed to load flipbook</p>
+        <p className="text-sm opacity-80">{initError}</p>
+        <p className="text-xs mt-4 opacity-70">
           Run &quot;npm run convert-pdf&quot; to generate page images from sample.pdf
         </p>
       </motion.div>
@@ -316,7 +316,7 @@ export default function FlipBook({
   if (initError && imageUrls.length > 0) {
     return (
       <div className="w-full h-full flex flex-col items-center overflow-auto p-4">
-        <p className="text-sm text-amber-400 mb-4">Using simple view (flip animation unavailable)</p>
+        <p className="text-sm text-amber-700 mb-4">Using simple view (flip animation unavailable)</p>
         <div className="flex flex-col gap-4 max-w-2xl w-full">
           {imageUrls.map((url, i) => (
             <img
@@ -341,7 +341,7 @@ export default function FlipBook({
       {/* Flipbook canvas wrapper — needs overflow visible for shadow/animation */}
       <motion.div
         ref={wrapperRef}
-        className="flex items-center justify-center"
+        className="flex items-center justify-center flipbook-pages-wrapper"
         style={{
           transform: `scale(${zoomLevel})`,
           transformOrigin: 'center center',
@@ -374,7 +374,7 @@ export default function FlipBook({
       {imageUrls.length > 0 && !isReady && (
         <div
           className="absolute inset-0 flex items-center justify-center z-[2]"
-          style={{ background: '#2d2d2d' }}
+          style={{ background: '#e8e2d8' }}
         >
           <img
             src={imageUrls[Math.max(0, currentPage - 1)] || imageUrls[0]}

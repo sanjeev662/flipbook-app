@@ -9,7 +9,7 @@ export default function Loader({ isLoading }) {
     <AnimatePresence>
       {isLoading && (
     <motion.div
-      className="fixed inset-0 z-40 flex items-center justify-center bg-white/90"
+      className="fixed inset-0 z-40 flex items-center justify-center bg-[#e8e2d8]/95 backdrop-blur-sm"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}

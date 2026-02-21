@@ -25,6 +25,19 @@ body {
   overflow: hidden;
 }
 
+/* Light theme — beige background with subtle texture (Publuu-style) */
+.flipbook-app-light {
+  background-color: #e8e2d8;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* Page-flip canvas — light blue border around book (Publuu-style) */
+.flipbook-pages-wrapper {
+  border: 1px solid rgba(147, 197, 253, 0.6);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
 /* Page-flip canvas visibility - ensure book content is visible */
 .stf__parent {
   display: block !important;
@@ -37,6 +50,53 @@ body {
   top: 0 !important;
   width: 100% !important;
   height: 100% !important;
+}
+
+/* ─── Light slider (footer) - touch-friendly, light theme ─── */
+input[type='range'].light-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 24px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+input[type='range'].light-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.12);
+}
+input[type='range'].light-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4b5563;
+  cursor: grab;
+  border: none;
+  margin-top: -6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+input[type='range'].light-slider:active::-webkit-slider-thumb {
+  cursor: grabbing;
+}
+input[type='range'].light-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.12);
+}
+input[type='range'].light-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4b5563;
+  cursor: grab;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+input[type='range'].light-slider:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* ─── Dark slider (footer) - touch-friendly ─── */

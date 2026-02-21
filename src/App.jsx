@@ -200,8 +200,7 @@ function App() {
 
   return (
     <motion.div
-      className="h-screen flex flex-col overflow-hidden"
-      style={{ background: '#2d2d2d' }}
+      className="h-screen flex flex-col overflow-hidden flipbook-app-light"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -209,7 +208,7 @@ function App() {
       <Loader isLoading={isLoading} />
 
       {toast && (
-        <div className="fixed bottom-16 sm:bottom-20 left-1/2 z-[100] px-3 py-2 xs:px-4 xs:py-2.5 bg-gray-900 text-white text-xs sm:text-sm rounded-lg shadow-xl animate-fade-in max-w-[90vw]" style={{ transform: 'translateX(-50%)' }}>
+        <div className="fixed bottom-16 sm:bottom-20 left-1/2 z-[100] px-3 py-2 xs:px-4 xs:py-2.5 bg-gray-800/90 text-white text-xs sm:text-sm rounded-lg shadow-xl animate-fade-in max-w-[90vw] backdrop-blur-sm" style={{ transform: 'translateX(-50%)' }}>
           {toast}
         </div>
       )}
@@ -236,7 +235,7 @@ function App() {
         <button
           type="button"
           onClick={handleFullscreen}
-          className="fixed top-2 right-2 z-50 w-10 h-10 flex items-center justify-center rounded-lg bg-black/50 text-white hover:bg-black/70 active:scale-95 transition-all cursor-pointer backdrop-blur-sm"
+          className="fixed top-2 right-2 z-50 w-10 h-10 flex items-center justify-center rounded-lg bg-gray-700/60 text-white hover:bg-gray-700/80 active:scale-95 transition-all cursor-pointer backdrop-blur-sm"
           style={{ top: 'max(0.5rem, env(safe-area-inset-top))', right: 'max(0.5rem, env(safe-area-inset-right))' }}
           aria-label="Exit fullscreen"
           title="Exit fullscreen"
@@ -254,10 +253,10 @@ function App() {
             type="button"
             onClick={handlePrev}
             disabled={currentPage <= 1}
-            className="absolute left-0 xs:left-1 sm:left-2 md:left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]"
+            className="absolute left-0 xs:left-1 sm:left-2 md:left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-gray-600/25 text-gray-800 hover:bg-gray-600/40 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]"
             aria-label="Previous page"
           >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -278,10 +277,10 @@ function App() {
             type="button"
             onClick={handleNext}
             disabled={currentPage >= totalPages}
-            className="absolute right-0 xs:right-1 sm:right-2 md:right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]"
+            className="absolute right-0 xs:right-1 sm:right-2 md:right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-gray-600/25 text-gray-800 hover:bg-gray-600/40 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]"
             aria-label="Next page"
           >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>

@@ -26,7 +26,15 @@ export default function Header({
     'w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-800 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[36px] min-h-[36px]';
 
   return (
-    <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-1 md:gap-2 px-2 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 border-b border-gray-200 bg-white min-h-[40px] sm:min-h-[44px] md:min-h-[50px] z-30 relative shrink-0">
+    <header
+      className="grid grid-cols-[1fr_auto_1fr] items-center gap-1 md:gap-2 px-2 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 border-b min-h-[40px] sm:min-h-[44px] md:min-h-[50px] z-30 relative shrink-0"
+      style={{
+        background: 'rgba(255, 255, 255, 0.55)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderColor: 'rgba(0, 0, 0, 0.06)',
+      }}
+    >
       {/* Title left with book icon — compact on mobile */}
       <div className="flex items-center gap-1.5 sm:gap-2 justify-self-start min-w-0">
         <BookIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-600 shrink-0" />
@@ -120,12 +128,15 @@ export default function Header({
         </button>
       </div>
 
-      {/* Branding right — compact on mobile */}
+      {/* Branding right — compact on mobile, dark blue accent like Publuu */}
       <div className="flex items-center gap-1 justify-self-end select-none shrink-0">
-        <span className="text-[8px] sm:text-[10px] tracking-widest text-gray-400 uppercase font-medium hidden xs:inline">
+        <span className="text-[8px] sm:text-[10px] tracking-widest text-gray-500 uppercase font-medium hidden xs:inline">
           POWERED BY
         </span>
-        <span className="font-bold text-gray-800 tracking-tight text-xs sm:text-sm md:text-base">
+        <span
+          className="font-bold tracking-tight text-xs sm:text-sm md:text-base"
+          style={{ color: '#1e3a5f' }}
+        >
           Flipbook
         </span>
       </div>

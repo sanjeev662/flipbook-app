@@ -96,7 +96,11 @@ export default function FlipBook({
     };
   }, [updateDimensions]);
 
-  // Load manifest and build image URLs
+  // Keep callback refs to avoid re-fetching on every parent re-render
+  const onLoadStateChangeRef = useRef(onLoadStateChange);
+  onLoadStateChangeRef.current = onLoadStateChange;
+
+  // Load manifest once on mount (do not re-run when callbacks change)
   useEffect(() => {
     let cancelled = false;
     async function loadManifest() {
@@ -119,13 +123,13 @@ export default function FlipBook({
         logErr('Manifest load error:', err);
         if (!cancelled) {
           setInitError(err.message || 'Failed to load flipbook pages');
-          onLoadStateChange?.({ isLoading: false, error: err.message, isReady: false });
+          onLoadStateChangeRef.current?.({ isLoading: false, error: err.message, isReady: false });
         }
       }
     }
     loadManifest();
     return () => { cancelled = true; };
-  }, [onLoadStateChange]);
+  }, []);
 
   // Init PageFlip once image URLs are available
   useEffect(() => {
@@ -214,7 +218,7 @@ export default function FlipBook({
         if (!cancelled) {
           const errMsg = err?.message || 'Failed to initialize flipbook';
           setInitError(errMsg);
-          onLoadStateChange?.({ isLoading: false, error: errMsg, isReady: false });
+          onLoadStateChangeRef.current?.({ isLoading: false, error: errMsg, isReady: false });
         }
       }
     }
@@ -269,8 +273,8 @@ export default function FlipBook({
   // Notify parent of load state
   useEffect(() => {
     const hasContent = imageUrls.length > 0;
-    onLoadStateChange?.({ isLoading: !hasContent && !initError, error: initError, isReady, hasContent });
-  }, [isReady, initError, imageUrls.length, onLoadStateChange]);
+    onLoadStateChangeRef.current?.({ isLoading: !hasContent && !initError, error: initError, isReady, hasContent });
+  }, [isReady, initError, imageUrls.length]);
 
   // Cleanup on unmount
   useEffect(() => {

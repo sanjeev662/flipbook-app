@@ -186,6 +186,15 @@ function App() {
     if (urls?.length) setTotalPages(urls.length);
   }, []);
 
+  const handleLoadStateChange = useCallback(({ error, isReady, hasContent }) => {
+    if (isReady || error || hasContent) handleLoaded();
+  }, [handleLoaded]);
+
+  const handlePageChangeWithUrl = useCallback((page) => {
+    setCurrentPage(page);
+    updateUrlForPage(page, totalPagesRef.current, true);
+  }, []);
+
   return (
     <motion.div
       className="h-screen flex flex-col overflow-hidden"
@@ -234,15 +243,10 @@ function App() {
 
           <FlipBook
             currentPage={currentPage}
-            onPageChange={(page) => {
-              setCurrentPage(page);
-              updateUrlForPage(page, totalPagesRef.current, true);
-            }}
+            onPageChange={handlePageChangeWithUrl}
             zoomLevel={zoomLevel}
             onFlipbookReady={handleFlipbookReady}
-            onLoadStateChange={({ error, isReady, hasContent }) => {
-              if (isReady || error || hasContent) handleLoaded();
-            }}
+            onLoadStateChange={handleLoadStateChange}
             onStateChange={handleFlipbookState}
             onPrevRef={flipPrevRef}
             onNextRef={flipNextRef}

@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Page-flip canvas visibility - ensure book content is visible */
+.stf__parent {
+  display: block !important;
+  position: relative !important;
+}
+.stf__parent canvas.stf__canvas {
+  display: block !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ─── Dark slider (footer) ─── */
+input[type='range'].dark-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 4px;
+  cursor: pointer;
+}
+input[type='range'].dark-slider::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+}
+input[type='range'].dark-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: none;
+  margin-top: -4.5px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+input[type='range'].dark-slider::-moz-range-track {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+}
+input[type='range'].dark-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+input[type='range'].dark-slider:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ─── Light slider (legacy, unused) ─── */
+input[type='range']:not(.dark-slider) {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+input[type='range']:not(.dark-slider)::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #4b5563;
+  cursor: pointer;
+  border: none;
+}
+input[type='range']:not(.dark-slider)::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #4b5563;
+  cursor: pointer;
+  border: none;
+}
+
+/* ─── Toast animation ─── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}

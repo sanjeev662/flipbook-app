@@ -144,11 +144,14 @@ function App() {
     const handler = (e) => {
       if (e.key === 'ArrowLeft') handlePrev();
       else if (e.key === 'ArrowRight') handleNext();
-      else if (e.key === 'Escape') setShowThumbnails(false);
+      else if (e.key === 'Escape') {
+        setShowThumbnails(false);
+        if (document.fullscreenElement) handleFullscreen();
+      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [handlePrev, handleNext]);
+  }, [handlePrev, handleNext, handleFullscreen]);
 
   const handleLoaded = useCallback(() => setIsLoading(false), []);
 
@@ -211,29 +214,47 @@ function App() {
         </div>
       )}
 
-      <Header
-        title={PUBLICATION_TITLE}
-        onThumbnail={() => setShowThumbnails(true)}
-        onShare={handleShare}
-        onDownload={handleDownload}
-        onPrint={handlePrint}
-        onZoomIn={handleZoomIn}
-        onZoomOut={handleZoomOut}
-        zoomLevel={zoomLevel}
-        zoomMin={ZOOM_MIN}
-        zoomMax={ZOOM_MAX}
-        onFullscreen={handleFullscreen}
-        isFullscreen={isFullscreen}
-      />
+      {!isFullscreen && (
+        <Header
+          title={PUBLICATION_TITLE}
+          onThumbnail={() => setShowThumbnails(true)}
+          onShare={handleShare}
+          onDownload={handleDownload}
+          onPrint={handlePrint}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          zoomLevel={zoomLevel}
+          zoomMin={ZOOM_MIN}
+          zoomMax={ZOOM_MAX}
+          onFullscreen={handleFullscreen}
+          isFullscreen={isFullscreen}
+        />
+      )}
+
+      {/* Exit fullscreen button — visible only when fullscreen */}
+      {isFullscreen && (
+        <button
+          type="button"
+          onClick={handleFullscreen}
+          className="fixed top-2 right-2 z-50 w-10 h-10 flex items-center justify-center rounded-lg bg-black/50 text-white hover:bg-black/70 active:scale-95 transition-all cursor-pointer backdrop-blur-sm"
+          style={{ top: 'max(0.5rem, env(safe-area-inset-top))', right: 'max(0.5rem, env(safe-area-inset-right))' }}
+          aria-label="Exit fullscreen"
+          title="Exit fullscreen"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9L4 4m0 0v4m0-4h4M15 9l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4M15 15l5 5m0 0v-4m0 4h-4" />
+          </svg>
+        </button>
+      )}
 
       <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden min-h-0 min-w-0">
-        <div className="w-full h-full flex items-center justify-center relative px-8 xs:px-10 sm:px-12 md:px-14 lg:px-16">
+        <div className={`w-full h-full flex items-center justify-center relative ${isFullscreen ? 'px-4 sm:px-8' : 'px-2 xs:px-4 sm:px-8 md:px-12 lg:px-16'}`}>
           {/* Left nav arrow */}
           <button
             type="button"
             onClick={handlePrev}
             disabled={currentPage <= 1}
-            className="absolute left-1 xs:left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[44px] min-h-[44px]"
+            className="absolute left-0 xs:left-1 sm:left-2 md:left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]"
             aria-label="Previous page"
           >
             <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
@@ -257,7 +278,7 @@ function App() {
             type="button"
             onClick={handleNext}
             disabled={currentPage >= totalPages}
-            className="absolute right-1 xs:right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[44px] min-h-[44px]"
+            className="absolute right-0 xs:right-1 sm:right-2 md:right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]"
             aria-label="Next page"
           >
             <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
@@ -267,15 +288,17 @@ function App() {
         </div>
       </main>
 
-      <Footer
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChangeWithUrl}
-        onThumbnail={() => setShowThumbnails(true)}
-        onFullscreen={handleFullscreen}
-        isFullscreen={isFullscreen}
-        isTwoPageSpread={isTwoPageSpread}
-      />
+      {!isFullscreen && (
+        <Footer
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChangeWithUrl}
+          onThumbnail={() => setShowThumbnails(true)}
+          onFullscreen={handleFullscreen}
+          isFullscreen={isFullscreen}
+          isTwoPageSpread={isTwoPageSpread}
+        />
+      )}
 
       <ThumbnailModal
         isOpen={showThumbnails}

@@ -48,24 +48,24 @@ export default function FlipBook({
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
-    const isNarrow = window.innerWidth < 640;
-    const hPad = isNarrow ? 48 : 64;
-    const vPad = isNarrow ? 140 : 120;
+    const isMobile = window.innerWidth < 768; // Single page on mobile/tablet portrait
+    const hPad = isMobile ? 40 : 64;
+    const vPad = isMobile ? 96 : 120; // Compact chrome on mobile
     let containerWidth = rect.width || Math.max(200, window.innerWidth - hPad);
-    let containerHeight = rect.height || Math.max(300, window.innerHeight - vPad);
+    let containerHeight = rect.height || Math.max(280, window.innerHeight - vPad);
 
     if (containerWidth < 100 || containerHeight < 100) {
-      containerWidth = Math.max(280, window.innerWidth - hPad);
-      containerHeight = Math.max(360, window.innerHeight - vPad);
+      containerWidth = Math.max(260, window.innerWidth - hPad);
+      containerHeight = Math.max(340, window.innerHeight - vPad);
     }
 
-    const wide = containerWidth >= 768; // Desktop: 2-page spread. Mobile: 1 page
+    const wide = containerWidth >= 768; // Desktop/tablet landscape: 2-page. Mobile: 1 page
     const aspectRatio = 612 / 792;
-    const maxPageHeight = containerHeight - 8;
+    const maxPageHeight = containerHeight - (isMobile ? 4 : 8);
     const maxPageWidthFromHeight = Math.floor(maxPageHeight * aspectRatio);
     const maxPageWidthFromContainer = wide
       ? Math.floor(containerWidth / 2) - 4
-      : Math.min(containerWidth - 8, 500);
+      : containerWidth - (isMobile ? 12 : 16); // Full width on mobile, no 500 cap
     const pageWidth = Math.min(maxPageWidthFromHeight, maxPageWidthFromContainer);
     const pageHeight = Math.min(maxPageHeight, Math.floor(pageWidth / aspectRatio));
     const totalWidth = wide ? pageWidth * 2 : pageWidth;
@@ -150,19 +150,19 @@ export default function FlipBook({
 
       // Get real container dimensions at init time
       const rect = measureEl?.getBoundingClientRect() || {};
-      const isNarrow = window.innerWidth < 640;
-      const hPad = isNarrow ? 48 : 64;
-      const vPad = isNarrow ? 140 : 120;
+      const isMobile = window.innerWidth < 768;
+      const hPad = isMobile ? 40 : 64;
+      const vPad = isMobile ? 96 : 120;
       let cw = rect.width || Math.max(200, window.innerWidth - hPad);
-      let ch = rect.height || Math.max(300, window.innerHeight - vPad);
-      if (cw < 100) cw = Math.min(500, window.innerWidth - hPad);
-      if (ch < 100) ch = Math.min(700, window.innerHeight - vPad);
+      let ch = rect.height || Math.max(280, window.innerHeight - vPad);
+      if (cw < 100) cw = Math.max(260, window.innerWidth - hPad);
+      if (ch < 100) ch = Math.max(340, window.innerHeight - vPad);
 
-      const isWide = cw >= 768; // Desktop: 2-page book spread. Mobile: single page
+      const isWide = cw >= 768; // Desktop: 2-page spread. Mobile: single page
       const aspectRatio = 612 / 792;
-      const availHeight = ch - 8;
+      const availHeight = ch - (isMobile ? 4 : 8);
       const maxWidthFromH = Math.floor(availHeight * aspectRatio);
-      const maxWidthFromW = isWide ? Math.floor(cw / 2) - 4 : Math.min(cw - 8, 500);
+      const maxWidthFromW = isWide ? Math.floor(cw / 2) - 4 : cw - (isMobile ? 12 : 16);
       const width = Math.max(200, Math.min(maxWidthFromH, maxWidthFromW));
       const height = Math.max(300, Math.min(availHeight, Math.floor((width * 792) / 612)));
 

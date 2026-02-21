@@ -28,23 +28,23 @@ export default function Footer({
   };
 
   const iconBtn =
-    'w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded text-white/60 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[44px] min-h-[44px]';
+    'w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center rounded text-white/60 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]';
 
   return (
     <footer
-      className="flex items-center justify-between px-3 xs:px-4 sm:px-6 py-2 sm:py-2.5 min-h-[44px] sm:min-h-[48px] gap-2 sm:gap-3 z-30 relative"
-      style={{ background: '#1e1e1e', borderTop: '1px solid rgba(255,255,255,0.08)' }}
+      className="flex items-center justify-between px-2 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 min-h-[40px] sm:min-h-[44px] md:min-h-[48px] gap-1.5 sm:gap-2 md:gap-3 z-30 relative shrink-0"
+      style={{ background: '#1e1e1e', borderTop: '1px solid rgba(255,255,255,0.08)', paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom, 0.375rem))' }}
     >
       {/* Page range left */}
       <div
-        className="text-[11px] xs:text-xs font-medium shrink-0 tabular-nums"
-        style={{ color: 'rgba(255,255,255,0.75)', minWidth: '64px' }}
+        className="text-[10px] xs:text-[11px] sm:text-xs font-medium shrink-0 tabular-nums"
+        style={{ color: 'rgba(255,255,255,0.75)', minWidth: '52px' }}
       >
         {pageRangeText}
       </div>
 
-      {/* Slider center - onInput for immediate feedback during drag */}
-      <div className="flex-1 min-w-0 max-w-md sm:max-w-lg mx-1 sm:mx-2">
+      {/* Slider center */}
+      <div className="flex-1 min-w-0 max-w-xs sm:max-w-md md:max-w-lg mx-1 sm:mx-2">
         <input
           type="range"
           min={1}
@@ -66,7 +66,7 @@ export default function Footer({
           aria-label="Table of contents"
           title="Table of contents"
         >
-          <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 sm:w-[18px] sm:h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
           </svg>
         </button>
@@ -78,11 +78,11 @@ export default function Footer({
           title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
         >
           {isFullscreen ? (
-            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-[18px] sm:h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9L4 4m0 0v4m0-4h4M15 9l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4M15 15l5 5m0 0v-4m0 4h-4" />
             </svg>
           ) : (
-            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-[18px] sm:h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
             </svg>
           )}

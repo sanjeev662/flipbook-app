@@ -48,7 +48,7 @@ export default function FlipBook({
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
-    const isMobile = window.innerWidth < 768; // Single page on mobile/tablet portrait
+    const isMobile = window.innerWidth < 1024; // Single page on mobile/tablet; 2-page only on desktop
     const hPad = isMobile ? 40 : 64;
     const vPad = isMobile ? 96 : 120; // Compact chrome on mobile
     let containerWidth = rect.width || Math.max(200, window.innerWidth - hPad);
@@ -59,7 +59,7 @@ export default function FlipBook({
       containerHeight = Math.max(340, window.innerHeight - vPad);
     }
 
-    const wide = containerWidth >= 768; // Desktop/tablet landscape: 2-page. Mobile: 1 page
+    const wide = containerWidth >= 1024; // Desktop only: 2-page spread. Mobile/tablet: single page
     const aspectRatio = 612 / 792;
     const maxPageHeight = containerHeight - (isMobile ? 4 : 8);
     const maxPageWidthFromHeight = Math.floor(maxPageHeight * aspectRatio);
@@ -150,7 +150,7 @@ export default function FlipBook({
 
       // Get real container dimensions at init time
       const rect = measureEl?.getBoundingClientRect() || {};
-      const isMobile = window.innerWidth < 768;
+      const isMobile = window.innerWidth < 1024;
       const hPad = isMobile ? 40 : 64;
       const vPad = isMobile ? 96 : 120;
       let cw = rect.width || Math.max(200, window.innerWidth - hPad);
@@ -158,7 +158,7 @@ export default function FlipBook({
       if (cw < 100) cw = Math.max(260, window.innerWidth - hPad);
       if (ch < 100) ch = Math.max(340, window.innerHeight - vPad);
 
-      const isWide = cw >= 768; // Desktop: 2-page spread. Mobile: single page
+      const isWide = cw >= 1024; // Desktop only: 2-page. Mobile/tablet: single page
       const aspectRatio = 612 / 792;
       const availHeight = ch - (isMobile ? 4 : 8);
       const maxWidthFromH = Math.floor(availHeight * aspectRatio);

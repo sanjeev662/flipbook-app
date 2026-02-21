@@ -1,8 +1,15 @@
-/**
- * Publuu-style header: title left, icon toolbar center, branding right
- */
+/** Flipbook icon SVG */
+const BookIcon = ({ className = 'w-5 h-5' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    <line x1="12" y1="6" x2="12" y2="18" />
+    <line x1="8" y1="10" x2="16" y2="10" />
+  </svg>
+);
+
 export default function Header({
-  title = 'Flipbook',
+  title = 'SpringBoot Interview Questions',
   onThumbnail,
   onShare,
   onDownload,
@@ -20,10 +27,13 @@ export default function Header({
 
   return (
     <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-1 sm:gap-2 px-3 xs:px-4 sm:px-6 py-2 sm:py-2.5 border-b border-gray-200 bg-white min-h-[44px] sm:min-h-[50px] z-30 relative">
-      {/* Title left */}
-      <h1 className="text-[11px] xs:text-xs sm:text-sm font-medium text-gray-700 truncate justify-self-start leading-tight max-w-[120px] xs:max-w-[160px] sm:max-w-none">
-        {title}
-      </h1>
+      {/* Title left with book icon */}
+      <div className="flex items-center gap-2 justify-self-start min-w-0">
+        <BookIcon className="w-5 h-5 xs:w-5 xs:h-5 sm:w-6 sm:h-6 text-gray-600 shrink-0" />
+        <h1 className="text-[11px] xs:text-xs sm:text-sm font-medium text-gray-700 truncate leading-tight">
+          {title}
+        </h1>
+      </div>
 
       {/* Icon toolbar center */}
       <div className="flex items-center gap-0.5 justify-self-center">
@@ -122,16 +132,13 @@ export default function Header({
         </button>
       </div>
 
-      {/* Branding right — "POWERED BY publuu" */}
+      {/* Branding right — "POWERED BY Flipbook" */}
       <div className="flex items-center gap-1 sm:gap-1.5 justify-self-end select-none shrink-0">
         <span className="text-[9px] xs:text-[10px] tracking-widest text-gray-400 uppercase font-medium hidden sm:inline">
           POWERED BY
         </span>
-        <span
-          className="font-bold text-gray-800 tracking-tight"
-          style={{ fontFamily: "'Georgia', serif", fontSize: '13px', letterSpacing: '-0.5px' }}
-        >
-          pub<span style={{ color: '#e05c1a' }}>l</span>uu
+        <span className="font-bold text-gray-800 tracking-tight text-sm sm:text-base">
+          Flipbook
         </span>
       </div>
     </header>

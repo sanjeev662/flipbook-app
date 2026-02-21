@@ -15,7 +15,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const PDF_PATH = join(__dirname, '../public/assets/pdf/sample.pdf');
 const OUTPUT_DIR = join(__dirname, '../public/assets/pdf/pages');
 const MANIFEST_PATH = join(__dirname, '../public/assets/pdf/manifest.json');
-const SCALE = 2;
+const SCALE = 3; // Higher scale = better quality on retina/high-DPI displays
 
 const forceFlag = process.argv.includes('--force');
 

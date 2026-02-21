@@ -16,12 +16,12 @@ export default function Header({
   isFullscreen,
 }) {
   const iconBtn =
-    'w-9 h-9 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-800 active:scale-95 transition-all cursor-pointer touch-manipulation';
+    'w-8 h-8 xs:w-9 xs:h-9 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-800 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[36px] min-h-[36px]';
 
   return (
-    <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 sm:px-6 py-2.5 border-b border-gray-200 bg-white min-h-[50px] z-30 relative">
+    <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-1 sm:gap-2 px-3 xs:px-4 sm:px-6 py-2 sm:py-2.5 border-b border-gray-200 bg-white min-h-[44px] sm:min-h-[50px] z-30 relative">
       {/* Title left */}
-      <h1 className="text-xs sm:text-sm font-medium text-gray-700 truncate justify-self-start leading-tight">
+      <h1 className="text-[11px] xs:text-xs sm:text-sm font-medium text-gray-700 truncate justify-self-start leading-tight max-w-[120px] xs:max-w-[160px] sm:max-w-none">
         {title}
       </h1>
 
@@ -123,13 +123,13 @@ export default function Header({
       </div>
 
       {/* Branding right — "POWERED BY publuu" */}
-      <div className="flex items-center gap-1.5 justify-self-end select-none">
-        <span className="text-[10px] tracking-widest text-gray-400 uppercase font-medium hidden sm:inline">
+      <div className="flex items-center gap-1 sm:gap-1.5 justify-self-end select-none shrink-0">
+        <span className="text-[9px] xs:text-[10px] tracking-widest text-gray-400 uppercase font-medium hidden sm:inline">
           POWERED BY
         </span>
         <span
           className="font-bold text-gray-800 tracking-tight"
-          style={{ fontFamily: "'Georgia', serif", fontSize: '15px', letterSpacing: '-0.5px' }}
+          style={{ fontFamily: "'Georgia', serif", fontSize: '13px', letterSpacing: '-0.5px' }}
         >
           pub<span style={{ color: '#e05c1a' }}>l</span>uu
         </span>

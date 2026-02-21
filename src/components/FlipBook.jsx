@@ -48,12 +48,15 @@ export default function FlipBook({
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
-    let containerWidth = rect.width || window.innerWidth - 96;
-    let containerHeight = rect.height || window.innerHeight - 110;
+    const isNarrow = window.innerWidth < 640;
+    const hPad = isNarrow ? 48 : 64;
+    const vPad = isNarrow ? 140 : 120;
+    let containerWidth = rect.width || Math.max(200, window.innerWidth - hPad);
+    let containerHeight = rect.height || Math.max(300, window.innerHeight - vPad);
 
     if (containerWidth < 100 || containerHeight < 100) {
-      containerWidth = Math.max(300, window.innerWidth - 96);
-      containerHeight = Math.max(400, window.innerHeight - 110);
+      containerWidth = Math.max(280, window.innerWidth - hPad);
+      containerHeight = Math.max(360, window.innerHeight - vPad);
     }
 
     const wide = containerWidth >= 768; // Desktop: 2-page spread. Mobile: 1 page
@@ -147,10 +150,13 @@ export default function FlipBook({
 
       // Get real container dimensions at init time
       const rect = measureEl?.getBoundingClientRect() || {};
-      let cw = rect.width || window.innerWidth - 96;
-      let ch = rect.height || window.innerHeight - 110;
-      if (cw < 100) cw = Math.min(500, window.innerWidth - 96);
-      if (ch < 100) ch = Math.min(700, window.innerHeight - 110);
+      const isNarrow = window.innerWidth < 640;
+      const hPad = isNarrow ? 48 : 64;
+      const vPad = isNarrow ? 140 : 120;
+      let cw = rect.width || Math.max(200, window.innerWidth - hPad);
+      let ch = rect.height || Math.max(300, window.innerHeight - vPad);
+      if (cw < 100) cw = Math.min(500, window.innerWidth - hPad);
+      if (ch < 100) ch = Math.min(700, window.innerHeight - vPad);
 
       const isWide = cw >= 768; // Desktop: 2-page book spread. Mobile: single page
       const aspectRatio = 612 / 792;
@@ -257,11 +263,15 @@ export default function FlipBook({
     if (lastReportedPageRef.current === currentPage) return; // came from flip event, already synced
     if (isFlippingRef.current) return; // animation in progress, don't interrupt
 
-    const targetIndex = currentPage - 1;
+    const targetIndex = currentPage - 1; // 0-based page index for PageFlip
     const currentIndex = pf.getCurrentPageIndex?.() ?? -1;
     if (currentIndex !== targetIndex) {
       log('sync turnToPage', targetIndex, '(was', currentIndex, ')');
-      try { pf.turnToPage(targetIndex); } catch (_) {}
+      lastReportedPageRef.current = currentPage; // prevent re-entry before flip event
+      try {
+        pf.turnToPage(targetIndex);
+        pf.getRender()?.update?.();
+      } catch (_) {}
     }
   }, [currentPage, imageUrls.length, isReady]);
 

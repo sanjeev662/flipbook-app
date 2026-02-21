@@ -206,7 +206,7 @@ function App() {
       <Loader isLoading={isLoading} />
 
       {toast && (
-        <div className="fixed bottom-20 left-1/2 z-[100] px-4 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl animate-fade-in" style={{ transform: 'translateX(-50%)' }}>
+        <div className="fixed bottom-16 sm:bottom-20 left-1/2 z-[100] px-3 py-2 xs:px-4 xs:py-2.5 bg-gray-900 text-white text-xs sm:text-sm rounded-lg shadow-xl animate-fade-in max-w-[90vw]" style={{ transform: 'translateX(-50%)' }}>
           {toast}
         </div>
       )}
@@ -226,17 +226,17 @@ function App() {
         isFullscreen={isFullscreen}
       />
 
-      <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden min-h-0">
-        <div className="w-full h-full flex items-center justify-center relative px-12 sm:px-16">
+      <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden min-h-0 min-w-0">
+        <div className="w-full h-full flex items-center justify-center relative px-8 xs:px-10 sm:px-12 md:px-14 lg:px-16">
           {/* Left nav arrow */}
           <button
             type="button"
             onClick={handlePrev}
             disabled={currentPage <= 1}
-            className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm"
+            className="absolute left-1 xs:left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[44px] min-h-[44px]"
             aria-label="Previous page"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -257,10 +257,10 @@ function App() {
             type="button"
             onClick={handleNext}
             disabled={currentPage >= totalPages}
-            className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm"
+            className="absolute right-1 xs:right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[44px] min-h-[44px]"
             aria-label="Next page"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -270,7 +270,7 @@ function App() {
       <Footer
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={handlePageChange}
+        onPageChange={handlePageChangeWithUrl}
         onThumbnail={() => setShowThumbnails(true)}
         onFullscreen={handleFullscreen}
         isFullscreen={isFullscreen}
@@ -282,7 +282,7 @@ function App() {
         onClose={() => setShowThumbnails(false)}
         imageUrls={imageUrls}
         currentPage={currentPage}
-        onPageSelect={handlePageChange}
+        onPageSelect={handlePageChangeWithUrl}
       />
     </motion.div>
   );

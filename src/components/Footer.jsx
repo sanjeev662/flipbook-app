@@ -28,23 +28,23 @@ export default function Footer({
   };
 
   const iconBtn =
-    'w-9 h-9 flex items-center justify-center rounded text-white/60 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer touch-manipulation';
+    'w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded text-white/60 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[44px] min-h-[44px]';
 
   return (
     <footer
-      className="flex items-center justify-between px-4 sm:px-6 py-2.5 min-h-[48px] gap-3 z-30 relative"
+      className="flex items-center justify-between px-3 xs:px-4 sm:px-6 py-2 sm:py-2.5 min-h-[44px] sm:min-h-[48px] gap-2 sm:gap-3 z-30 relative"
       style={{ background: '#1e1e1e', borderTop: '1px solid rgba(255,255,255,0.08)' }}
     >
       {/* Page range left */}
       <div
-        className="text-xs font-medium shrink-0 tabular-nums"
-        style={{ color: 'rgba(255,255,255,0.75)', minWidth: '80px' }}
+        className="text-[11px] xs:text-xs font-medium shrink-0 tabular-nums"
+        style={{ color: 'rgba(255,255,255,0.75)', minWidth: '64px' }}
       >
         {pageRangeText}
       </div>
 
-      {/* Slider center */}
-      <div className="flex-1 min-w-0 max-w-lg mx-2">
+      {/* Slider center - onInput for immediate feedback during drag */}
+      <div className="flex-1 min-w-0 max-w-md sm:max-w-lg mx-1 sm:mx-2">
         <input
           type="range"
           min={1}

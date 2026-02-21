@@ -217,6 +217,30 @@ export default function FlipBook({
         });
 
         pageFlip.loadFromImages(imageUrls);
+
+        // High-DPI canvas patch: render sharply on retina displays
+        const ui = pageFlip.getUI?.();
+        if (ui?.resizeCanvas && ui?.getCanvas) {
+          const originalResize = ui.resizeCanvas.bind(ui);
+          ui.resizeCanvas = function () {
+            originalResize();
+            const canvas = ui.getCanvas();
+            const dpr = Math.min(window.devicePixelRatio || 1, 3);
+            if (dpr <= 1 || !canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+            if (w <= 0 || h <= 0) return;
+            canvas.width = Math.floor(w * dpr);
+            canvas.height = Math.floor(h * dpr);
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            const ctx = canvas.getContext('2d');
+            if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          };
+          ui.resizeCanvas(); // Apply immediately
+        }
+
         pageFlipRef.current = pageFlip;
 
       } catch (err) {

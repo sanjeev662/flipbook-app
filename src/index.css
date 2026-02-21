@@ -50,6 +50,9 @@ body {
   top: 0 !important;
   width: 100% !important;
   height: 100% !important;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+  transform: translateZ(0); /* GPU layer for sharp scaling */
 }
 
 /* ─── Light slider (footer) - touch-friendly, light theme ─── */

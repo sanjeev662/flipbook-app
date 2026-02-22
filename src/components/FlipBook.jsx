@@ -15,6 +15,7 @@ const logErr = (...args) => console.error('[FlipBook]', ...args);
 
 const DEFAULT_WIDTH = 400;
 const DEFAULT_HEIGHT = 560;
+const MAX_STACK_PX = 8; // max visible thickness of page stack (px)
 
 export default function FlipBook({
   currentPage,
@@ -30,8 +31,8 @@ export default function FlipBook({
   const measureRef = useRef(null);
   const wrapperRef = useRef(null);
   const pageFlipRef = useRef(null);
-  const isFlippingRef = useRef(false); // track if a flip animation is in progress
-  const lastReportedPageRef = useRef(currentPage); // avoid redundant sync calls
+  const isFlippingRef = useRef(false);
+  const lastReportedPageRef = useRef(currentPage);
 
   const [dimensions, setDimensions] = useState({
     width: DEFAULT_WIDTH,
@@ -43,14 +44,21 @@ export default function FlipBook({
   const [initError, setInitError] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
 
+  // ── Derived book-state for physical decoration ──
+  const totalPagesCount = imageUrls.length;
+  const pageProgress = totalPagesCount > 1 ? (currentPage - 1) / (totalPagesCount - 1) : 0;
+  const isCover = currentPage <= 1 && totalPagesCount > 0;
+  const rightStackPx = Math.max(4, Math.round((1 - pageProgress) * MAX_STACK_PX));
+  const leftStackPx = Math.round(pageProgress * MAX_STACK_PX);
+
   const updateDimensions = useCallback(() => {
     const el = measureRef.current || containerRef.current;
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
-    const isMobile = window.innerWidth < 1024; // Single page on mobile/tablet; 2-page only on desktop
+    const isMobile = window.innerWidth < 1024;
     const hPad = isMobile ? 40 : 64;
-    const vPad = isMobile ? 96 : 120; // Compact chrome on mobile
+    const vPad = isMobile ? 96 : 120;
     let containerWidth = rect.width || Math.max(200, window.innerWidth - hPad);
     let containerHeight = rect.height || Math.max(280, window.innerHeight - vPad);
 
@@ -59,13 +67,13 @@ export default function FlipBook({
       containerHeight = Math.max(340, window.innerHeight - vPad);
     }
 
-    const wide = containerWidth >= 1024; // Desktop only: 2-page spread. Mobile/tablet: single page
+    const wide = containerWidth >= 1024;
     const aspectRatio = 612 / 792;
     const maxPageHeight = containerHeight - (isMobile ? 4 : 8);
     const maxPageWidthFromHeight = Math.floor(maxPageHeight * aspectRatio);
     const maxPageWidthFromContainer = wide
       ? Math.floor(containerWidth / 2) - 4
-      : containerWidth - (isMobile ? 12 : 16); // Full width on mobile, no 500 cap
+      : containerWidth - (isMobile ? 12 : 16);
     const pageWidth = Math.min(maxPageWidthFromHeight, maxPageWidthFromContainer);
     const pageHeight = Math.min(maxPageHeight, Math.floor(pageWidth / aspectRatio));
     const totalWidth = wide ? pageWidth * 2 : pageWidth;
@@ -99,11 +107,9 @@ export default function FlipBook({
     };
   }, [updateDimensions]);
 
-  // Keep callback refs to avoid re-fetching on every parent re-render
   const onLoadStateChangeRef = useRef(onLoadStateChange);
   onLoadStateChangeRef.current = onLoadStateChange;
 
-  // Load manifest once on mount (do not re-run when callbacks change)
   useEffect(() => {
     let cancelled = false;
     async function loadManifest() {
@@ -134,7 +140,6 @@ export default function FlipBook({
     return () => { cancelled = true; };
   }, []);
 
-  // Init PageFlip once image URLs are available
   useEffect(() => {
     if (!imageUrls.length) return;
 
@@ -148,7 +153,6 @@ export default function FlipBook({
         return;
       }
 
-      // Get real container dimensions at init time
       const rect = measureEl?.getBoundingClientRect() || {};
       const isMobile = window.innerWidth < 1024;
       const hPad = isMobile ? 40 : 64;
@@ -158,7 +162,7 @@ export default function FlipBook({
       if (cw < 100) cw = Math.max(260, window.innerWidth - hPad);
       if (ch < 100) ch = Math.max(340, window.innerHeight - vPad);
 
-      const isWide = cw >= 1024; // Desktop only: 2-page. Mobile/tablet: single page
+      const isWide = cw >= 1024;
       const aspectRatio = 612 / 792;
       const availHeight = ch - (isMobile ? 4 : 8);
       const maxWidthFromH = Math.floor(availHeight * aspectRatio);
@@ -175,10 +179,10 @@ export default function FlipBook({
           size: 'fixed',
           drawShadow: true,
           flippingTime: 700,
-          usePortrait: !isWide, // false = landscape = 2-page spread; true = portrait = 1 page
+          usePortrait: !isWide,
           startPage: Math.max(0, Math.min(currentPage - 1, imageUrls.length - 1)),
-          maxShadowOpacity: 0.7,
-          showCover: false,
+          maxShadowOpacity: 0.6,
+          showCover: true,
           mobileScrollSupport: true,
           swipeDistance: 25,
           autoSize: false,
@@ -186,7 +190,6 @@ export default function FlipBook({
           useMouseEvents: true,
         });
 
-        // ── flip event: user dragged or we called flipNext/flipPrev ──
         pageFlip.on('flip', (e) => {
           isFlippingRef.current = false;
           const idx = typeof e.data === 'number' ? e.data : 0;
@@ -197,17 +200,14 @@ export default function FlipBook({
         });
 
         pageFlip.on('changeState', (e) => {
-          // 'flipping' state means animation is in progress
           isFlippingRef.current = e.data === 'flipping';
         });
 
-        // ── init event: PageFlip is fully ready ──
         pageFlip.on('init', () => {
           log('PageFlip init event - ready');
           if (!cancelled) {
             setIsReady(true);
             onFlipbookReady?.(pageFlip);
-            // Expose prev/next handlers so parent can call them (with correct refs)
             if (onPrevRef) onPrevRef.current = () => { isFlippingRef.current = true; pageFlip.flipPrev('bottom'); };
             if (onNextRef) onNextRef.current = () => { isFlippingRef.current = true; pageFlip.flipNext('bottom'); };
             requestAnimationFrame(() => {
@@ -218,7 +218,6 @@ export default function FlipBook({
 
         pageFlip.loadFromImages(imageUrls);
 
-        // High-DPI canvas patch: render sharply on retina displays
         const ui = pageFlip.getUI?.();
         if (ui?.resizeCanvas && ui?.getCanvas) {
           const originalResize = ui.resizeCanvas.bind(ui);
@@ -238,7 +237,7 @@ export default function FlipBook({
             const ctx = canvas.getContext('2d');
             if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
           };
-          ui.resizeCanvas(); // Apply immediately
+          ui.resizeCanvas();
         }
 
         pageFlipRef.current = pageFlip;
@@ -253,7 +252,6 @@ export default function FlipBook({
       }
     }
 
-    // Wait for DOM layout before initialising
     const timer = setTimeout(init, 250);
 
     return () => {
@@ -269,7 +267,6 @@ export default function FlipBook({
     };
   }, [imageUrls]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Re-render canvas when zoom or dimensions change
   useEffect(() => {
     if (pageFlipRef.current && isReady) {
       requestAnimationFrame(() => {
@@ -278,20 +275,18 @@ export default function FlipBook({
     }
   }, [dimensions, isReady]);
 
-  // Sync external currentPage → PageFlip (for slider / thumbnail navigation)
-  // Skip if the change came from a flip event (lastReportedPageRef matches)
   useEffect(() => {
     const pf = pageFlipRef.current;
     const total = imageUrls.length;
     if (!pf || !isReady || currentPage < 1 || currentPage > total) return;
-    if (lastReportedPageRef.current === currentPage) return; // came from flip event, already synced
-    if (isFlippingRef.current) return; // animation in progress, don't interrupt
+    if (lastReportedPageRef.current === currentPage) return;
+    if (isFlippingRef.current) return;
 
-    const targetIndex = currentPage - 1; // 0-based page index for PageFlip
+    const targetIndex = currentPage - 1;
     const currentIndex = pf.getCurrentPageIndex?.() ?? -1;
     if (currentIndex !== targetIndex) {
       log('sync turnToPage', targetIndex, '(was', currentIndex, ')');
-      lastReportedPageRef.current = currentPage; // prevent re-entry before flip event
+      lastReportedPageRef.current = currentPage;
       try {
         pf.turnToPage(targetIndex);
         pf.getRender()?.update?.();
@@ -299,18 +294,15 @@ export default function FlipBook({
     }
   }, [currentPage, imageUrls.length, isReady]);
 
-  // Notify parent of image URLs and spread mode
   useEffect(() => {
     onStateChange?.({ imageUrls, isWide: dimensions.isWide });
   }, [imageUrls, dimensions.isWide, onStateChange]);
 
-  // Notify parent of load state
   useEffect(() => {
     const hasContent = imageUrls.length > 0;
     onLoadStateChangeRef.current?.({ isLoading: !hasContent && !initError, error: initError, isReady, hasContent });
   }, [isReady, initError, imageUrls.length]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (pageFlipRef.current) {
@@ -362,39 +354,66 @@ export default function FlipBook({
       className="w-full h-full flex items-center justify-center relative"
       style={{ minHeight: 0 }}
     >
-      {/* Flipbook canvas wrapper — needs overflow visible for shadow/animation */}
       <motion.div
-        ref={wrapperRef}
-        className="flex items-center justify-center flipbook-pages-wrapper"
-        style={{
-          transform: `scale(${zoomLevel})`,
-          transformOrigin: 'center center',
-          transition: 'transform 0.3s ease-in-out',
-          height: dimensions.height,
-          width: dimensions.totalWidth,
-          position: 'relative',
-          zIndex: 1,
-          flexShrink: 0,
-        }}
-      >
-        <div
-          ref={containerRef}
-          className="stf__container"
+          ref={wrapperRef}
+          className="book-wrapper"
           style={{
-            width: dimensions.totalWidth,
+            transform: `scale(${zoomLevel})`,
+            transformOrigin: 'center center',
+            transition: 'transform 0.3s ease-in-out',
             height: dimensions.height,
-            minWidth: dimensions.width,
-            minHeight: dimensions.height,
-            flexShrink: 0,
+            width: dimensions.totalWidth,
             position: 'relative',
-            overflow: 'visible',
-            display: 'block',
-            backgroundColor: 'transparent',
+            zIndex: 1,
+            flexShrink: 0,
           }}
-        />
-      </motion.div>
+        >
+          {/* ── Left page stack (pages already read) ── */}
+          {dimensions.isWide && leftStackPx > 1 && (
+            <div
+              className="book-page-stack book-page-stack--left"
+              style={{ height: dimensions.height - 6, width: leftStackPx }}
+            />
+          )}
 
-      {/* Loading overlay — shows first page image until PageFlip initialises */}
+          {/* ── Right page stack (pages remaining) ── */}
+          {rightStackPx > 1 && (
+            <div
+              className="book-page-stack book-page-stack--right"
+              style={{ height: dimensions.height - 6, width: rightStackPx }}
+            />
+          )}
+
+          {/* ── Actual page-flip canvas ── */}
+          <div
+            ref={containerRef}
+            className="stf__container"
+            style={{
+              width: dimensions.totalWidth,
+              height: dimensions.height,
+              minWidth: dimensions.width,
+              minHeight: dimensions.height,
+              flexShrink: 0,
+              position: 'relative',
+              overflow: 'visible',
+              display: 'block',
+              backgroundColor: 'transparent',
+            }}
+          />
+
+          {/* ── Spine shadow overlay (center divider when book is open) ── */}
+          {dimensions.isWide && !isCover && isReady && totalPagesCount > 0 && (
+            <div
+              className="book-spine-overlay"
+              style={{ left: dimensions.width }}
+            />
+          )}
+
+          {/* ── Bottom floor shadow ── */}
+          <div className="book-floor-shadow" />
+        </motion.div>
+
+      {/* Loading overlay */}
       {imageUrls.length > 0 && !isReady && (
         <div
           className="absolute inset-0 flex items-center justify-center z-[2]"

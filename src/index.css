@@ -34,10 +34,44 @@ body {
   background-repeat: no-repeat, repeat;
 }
 
-/* ── Book wrapper — single soft shadow, no 3D ── */
+/* ── Outer book container — applies zoom, anchors page stacks ── */
+.book-outer {
+  /* Width transitions when book opens from cover → spread */
+  transition: width 0.35s ease, transform 0.3s ease-in-out;
+}
+
+/* ── Book wrapper — clips canvas to visible region, carries drop shadow ── */
 .book-wrapper {
-  overflow: visible !important;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.18));
+  border-radius: 2px;
+  /* drop-shadow renders outside the clipped area — no background color */
+  filter: drop-shadow(0 5px 16px rgba(0, 0, 0, 0.20))
+          drop-shadow(0 1px  4px rgba(0, 0, 0, 0.10));
+}
+
+/* ── Cover state: slightly more prominent border + soft rounding ── */
+.book-wrapper--cover {
+  border-radius: 3px;
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.22))
+          drop-shadow(0 1px  5px rgba(0, 0, 0, 0.12));
+}
+
+/* ── Canvas inner shifter — transitions from cover shift to normal ── */
+.book-canvas-inner {
+  transition: left 0.35s ease;
+}
+
+/* ── Cover border frame overlay ── */
+.book-cover-frame {
+  position:       absolute;
+  inset:          0;
+  border-radius:  3px;
+  border:         1.5px solid rgba(0, 0, 0, 0.11);
+  /* Subtle inset edge shading — mimics a printed hardcover edge */
+  box-shadow:
+    inset  3px 0 8px rgba(0, 0, 0, 0.05),
+    inset -2px 0 6px rgba(0, 0, 0, 0.03);
+  pointer-events: none;
+  z-index:        12;
 }
 
 /* ── Page stack edges — minimal paper-edge hint ── */
@@ -45,7 +79,6 @@ body {
   position: absolute;
   top: 2px;
   z-index: 0;
-  /* Very fine horizontal stripes simulating stacked paper */
   background: repeating-linear-gradient(
     to bottom,
     #f5f2eb 0px,
@@ -69,15 +102,15 @@ body {
   box-shadow: -2px 1px 4px rgba(0, 0, 0, 0.10);
 }
 
-/* ── Center spine shadow — faint binding crease when open ── */
+/* ── Center spine crease — visible when book is open ── */
 .book-spine-overlay {
-  position: absolute;
-  top: 0;
-  width: 20px;
-  height: 100%;
-  transform: translateX(-50%);
+  position:       absolute;
+  top:            0;
+  width:          20px;
+  height:         100%;
+  transform:      translateX(-50%);
   pointer-events: none;
-  z-index: 10;
+  z-index:        10;
   background: linear-gradient(
     to right,
     transparent          0%,
@@ -88,22 +121,33 @@ body {
   );
 }
 
-/* ── Floor shadow — very soft, barely-there ── */
+/* ── Floor shadow — soft ground cast ── */
 .book-floor-shadow {
-  position: absolute;
-  bottom: -12px;
-  left: 8%;
-  width: 84%;
-  height: 12px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.14) 0%, transparent 70%);
+  position:       absolute;
+  bottom:         -10px;
+  left:           6%;
+  width:          88%;
+  height:         10px;
+  background:     radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.12) 0%, transparent 70%);
   pointer-events: none;
-  z-index: -1;
+  z-index:        -1;
 }
 
-/* ── Individual page border — thin soft grey edge around each page ── */
+/* ── Loading cover — displayed until PageFlip initialises ── */
+.book-loading-cover {
+  object-fit:    cover;
+  border-radius: 3px;
+  border:        1.5px solid rgba(0, 0, 0, 0.11);
+  box-shadow:
+    0 5px 16px rgba(0, 0, 0, 0.20),
+    0 1px  4px rgba(0, 0, 0, 0.10);
+  display: block;
+}
+
+/* ── Individual page border — thin soft grey edge ── */
 .stf__item {
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: inset 0 0 0 1px rgba(200, 195, 185, 0.4) !important;
+  border:     1px solid rgba(0, 0, 0, 0.07) !important;
+  box-shadow: inset 0 0 0 1px rgba(200, 195, 185, 0.35) !important;
   box-sizing: border-box !important;
 }
 

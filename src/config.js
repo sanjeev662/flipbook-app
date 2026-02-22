@@ -1,7 +1,7 @@
 /**
  * Flipbook configuration - customize for your publication
  */
-export const PUBLICATION_TITLE = 'SpringBoot Interview Questions';
+export const PUBLICATION_TITLE = 'Gold Silver News January 2026';
 
 const getBase = () => {
   const b = import.meta.env.BASE_URL || '/';

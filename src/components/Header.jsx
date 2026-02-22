@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 export default function Header({
-  title = "SpringBoot Interview Questions",
+  title = "Gold Silver News January 2026",
   onThumbnail,
   onShare,
   onDownload,

@@ -64,7 +64,7 @@ export default function Header({
 
           {/* Right: Powered By */}
           <div className="flex items-center gap-1 select-none shrink-0 ml-auto">
-            <span className="text-[9px] sm:text-[10px] tracking-widest text-gray-500 uppercase font-medium">
+            {/* <span className="text-[9px] sm:text-[10px] tracking-widest text-gray-500 uppercase font-medium">
               POWERED BY
             </span>
             <span
@@ -72,7 +72,7 @@ export default function Header({
               style={{ color: "#1e3a5f" }}
             >
               Flipbook
-            </span>
+            </span> */}
           </div>
         </div>
         <div className="w-full flex justify-center">
@@ -293,7 +293,7 @@ export default function Header({
 
         {/* Right: Branding */}
         <div className="flex items-center gap-1 justify-self-end select-none shrink-0">
-          <span className="text-[10px] tracking-widest text-gray-500 uppercase font-medium">
+          {/* <span className="text-[10px] tracking-widest text-gray-500 uppercase font-medium">
             POWERED BY
           </span>
           <span
@@ -301,7 +301,7 @@ export default function Header({
             style={{ color: "#1e3a5f" }}
           >
             Flipbook
-          </span>
+          </span> */}
         </div>
       </div>
     </header>

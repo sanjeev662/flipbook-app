@@ -28,11 +28,11 @@ export default function Header({
 }) {
   // Desktop button
   const iconBtnDesktop =
-    "w-8 h-8 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-800 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[32px] min-h-[32px]";
+    "w-8 h-8 flex items-center justify-center rounded text-gray-600 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[32px] min-h-[32px]";
 
   // Compact button (mobile/tablet)
   const iconBtnCompact =
-    "w-7 h-7 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-800 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[28px] min-h-[28px]";
+    "w-7 h-7 flex items-center justify-center rounded text-gray-600 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[28px] min-h-[28px]";
 
   return (
     <header
@@ -58,7 +58,7 @@ export default function Header({
               strokeWidth={2}
             />
 
-            <h1 className="text-base sm:text-base font-bold text-gray-500 truncate leading-tight max-w-[65vw]">
+            <h1 className="text-base sm:text-base font-bold text-gray-600 truncate leading-tight max-w-[65vw]">
               {title}
             </h1>
           </div>
@@ -144,7 +144,7 @@ export default function Header({
               <ZoomOut className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
 
-            <span className="text-[10px] sm:text-xs text-gray-400 min-w-[34px] sm:min-w-[40px] text-center font-medium select-none tabular-nums">
+            <span className="text-[10px] sm:text-xs text-gray-600 min-w-[34px] sm:min-w-[40px] text-center font-medium select-none tabular-nums">
               {Math.round(zoomLevel * 100)}%
             </span>
 
@@ -188,7 +188,7 @@ export default function Header({
             className="w-7 h-7 text-gray-600 shrink-0"
             strokeWidth={2}
           />
-          <h1 className="text-base font-bold text-gray-500 truncate leading-tight">
+          <h1 className="text-base font-bold text-gray-600 truncate leading-tight">
             {title}
           </h1>
         </div>
@@ -257,7 +257,7 @@ export default function Header({
             <ZoomOut className="w-5 h-5" strokeWidth={2} />
           </button>
 
-          <span className="text-xs text-gray-400 min-w-[40px] text-center font-medium select-none tabular-nums">
+          <span className="text-xs text-gray-600 min-w-[40px] text-center font-medium select-none tabular-nums">
             {Math.round(zoomLevel * 100)}%
           </span>
 

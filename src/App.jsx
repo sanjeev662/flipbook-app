@@ -5,7 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ThumbnailModal from './components/ThumbnailModal';
 import Loader from './components/Loader';
-import { PUBLICATION_TITLE, PDF_URL, getPageFromUrl, updateUrlForPage } from './config';
+import { PUBLICATION_TITLE, getPageFromUrl, updateUrlForPage } from './config';
 
 const ZOOM_MIN = 1;
 const ZOOM_MAX = 2.5;
@@ -111,19 +111,7 @@ function App() {
   }, [showToast]);
 
   const handleDownload = useCallback(() => {
-    try {
-      const a = document.createElement('a');
-      a.href = PDF_URL;
-      a.download = 'flipbook.pdf';
-      a.target = '_blank';
-      a.rel = 'noopener';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      showToast('Download started');
-    } catch {
-      window.open(PDF_URL, '_blank');
-    }
+    showToast('No PDF available — flipbook uses images from manifest');
   }, [showToast]);
 
   const handlePrint = useCallback(() => {

@@ -2,7 +2,6 @@
  * Flipbook configuration - customize for your publication
  */
 export const PUBLICATION_TITLE = 'SpringBoot Interview Questions';
-export const PDF_URL = '/assets/pdf/sample.pdf';
 
 const getBase = () => {
   const b = import.meta.env.BASE_URL || '/';

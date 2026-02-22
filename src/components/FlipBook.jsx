@@ -310,7 +310,7 @@ export default function FlipBook({
         <p className="text-lg font-medium mb-2 text-gray-800">Failed to load flipbook</p>
         <p className="text-sm opacity-80">{initError}</p>
         <p className="text-xs mt-4 opacity-70">
-          Run &quot;npm run convert-pdf&quot; to generate page images from sample.pdf
+          Add images to public/assets/pdf/pages/ and update manifest.json
         </p>
       </motion.div>
     );

@@ -1,99 +1,117 @@
+import { useState, useEffect } from 'react';
+
 /**
- * Publuu-style footer: page range left, slider center, icons right — dark theme
+ * Publuu-style footer: footer__left (page input), footer__center (Ranger), footer__right (fullscreen)
+ * Matches reference: input + "/ 76" left | current [slider] total center | fullscreen right
  */
 export default function Footer({
   currentPage,
   totalPages,
   onPageChange,
-  onThumbnail,
   onFullscreen,
   isFullscreen,
-  isTwoPageSpread = true,
 }) {
-  const startPage = isTwoPageSpread
-    ? Math.max(1, Math.floor((currentPage - 1) / 2) * 2 + 1)
-    : currentPage;
-  const endPage = isTwoPageSpread ? Math.min(totalPages, startPage + 1) : currentPage;
-  const pageRangeText =
-    totalPages <= 1
-      ? `1 / 1`
-      : isTwoPageSpread && startPage !== endPage
-        ? `${startPage}-${endPage} / ${totalPages}`
-        : `${currentPage} / ${totalPages}`;
+  const [inputValue, setInputValue] = useState(String(currentPage));
+
+  useEffect(() => {
+    setInputValue(String(currentPage));
+  }, [currentPage]);
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value.replace(/\D/g, ''));
+  };
+
+  const handleInputBlur = () => {
+    const n = parseInt(inputValue, 10);
+    if (!Number.isNaN(n) && n >= 1 && n <= totalPages) {
+      onPageChange?.(n);
+    } else {
+      setInputValue(String(currentPage));
+    }
+  };
+
+  const handleInputKeyDown = (e) => {
+    if (e.key === 'Enter') handleInputBlur();
+  };
 
   const handleSliderChange = (e) => {
-    const value = Number(e.target.value);
-    const page = Math.max(1, Math.min(totalPages || 1, Math.round(value)));
+    const page = Math.max(1, Math.min(totalPages || 1, Math.round(Number(e.target.value))));
     onPageChange?.(page);
   };
 
   const iconBtn =
-    'w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center rounded text-gray-600 hover:text-gray-800 hover:bg-black/5 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]';
+    'inline path flex items-center justify-center rounded w-7 h-7 min-w-[28px] min-h-[28px] hover:opacity-80 active:scale-95 transition-all cursor-pointer [color:var(--flipbook-icon-color)] [opacity:var(--flipbook-icon-opacity)]';
+
+  const fullscreenSvg = (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: '100%', height: '100%' }}>
+      <path d="M61.3,21.3c1.6,0,2.7-1.1,2.7-2.7v-16C64,1.1,62.9,0,61.3,0h-16c-1.6,0-2.7,1.1-2.7,2.7s1.1,2.7,2.7,2.7h9.6L32,28.3L9.1,5.3h9.6c1.6,0,2.7-1.1,2.7-2.7S20.3,0,18.7,0h-16C2.4,0,1.9,0,1.6,0.3C1.1,0.5,0.5,1.1,0.3,1.6C0,1.9,0,2.4,0,2.7v16c0,1.6,1.1,2.7,2.7,2.7s2.7-1.1,2.7-2.7V9.1L28.3,32L5.3,54.9v-9.6c0-1.6-1.1-2.7-2.7-2.7S0,43.7,0,45.3v16C0,62.9,1.1,64,2.7,64h16c1.6,0,2.7-1.1,2.7-2.7c0-1.6-1.1-2.7-2.7-2.7H9.1L32,35.7l22.9,22.9h-9.6c-1.6,0-2.7,1.1-2.7,2.7c0,1.6,1.1,2.7,2.7,2.7h16c1.6,0,2.7-1.1,2.7-2.7v-16c0-1.6-1.1-2.7-2.7-2.7c-1.6,0-2.7,1.1-2.7,2.7v9.6L35.7,32L58.7,9.1v9.6C58.7,20.3,59.7,21.3,61.3,21.3z" />
+    </svg>
+  );
 
   return (
     <footer
-      className="flex items-center justify-between px-2 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 min-h-[40px] sm:min-h-[44px] md:min-h-[48px] gap-1.5 sm:gap-2 md:gap-3 z-30 relative shrink-0"
-      style={{
-        background: 'rgba(255, 255, 255, 0.55)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        borderTop: '1px solid rgba(0, 0, 0, 0.06)',
-        paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom, 0.375rem))',
-      }}
+      id="footer"
+      className="flipbook-footer flex justify-between items-center z-30 relative shrink-0"
+      style={{ paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom, 0.375rem))' }}
     >
-      {/* Page range left */}
-      <div
-        className="text-[10px] xs:text-[11px] sm:text-xs font-medium shrink-0 tabular-nums text-gray-700"
-        style={{ minWidth: '52px' }}
-      >
-        {pageRangeText}
+      <div className="footer__left">
+        <div className="footer__page-num" aria-label="Page Number" title="Page Number">
+          <input
+            type="text"
+            className="page-num-input tabular-nums"
+            inputMode="numeric"
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            onKeyDown={handleInputKeyDown}
+            aria-label="Page Number"
+            title="Page Number"
+          />
+          <span>/&nbsp;{totalPages}</span>
+        </div>
       </div>
 
-      {/* Slider center */}
-      <div className="flex-1 min-w-0 max-w-xs sm:max-w-md md:max-w-lg mx-1 sm:mx-2">
-        <input
-          type="range"
-          min={1}
-          max={Math.max(1, totalPages)}
-          value={currentPage}
-          onChange={handleSliderChange}
-          disabled={!totalPages || totalPages <= 1}
-          className="w-full light-slider"
-          aria-label="Page slider"
-        />
+      <div className="footer__center">
+        <div className="Ranger__container light">
+          <div className="Ranger_page-num current-page-num">{currentPage}</div>
+          <div className="Ranger Book__pagesRanger flex-1 min-w-0">
+            <input
+              type="range"
+              id="pageranger"
+              aria-label="Page Slider"
+              className="slider light light-slider light-slider-publuu w-full"
+              min={1}
+              max={Math.max(1, totalPages)}
+              value={currentPage}
+              onChange={handleSliderChange}
+              disabled={!totalPages || totalPages <= 1}
+              style={{
+                '--slider-progress': totalPages > 1
+                  ? `${((currentPage - 1) / (totalPages - 1)) * 100}%`
+                  : '0%',
+              }}
+            />
+          </div>
+          <div className="Ranger_page-num total-pages-num">{totalPages}</div>
+        </div>
       </div>
 
-      {/* Icons right */}
-      <div className="flex items-center gap-0.5 shrink-0">
-        <button
-          type="button"
-          onClick={onThumbnail}
-          className={iconBtn}
-          aria-label="Table of contents"
-          title="Table of contents"
-        >
-          <svg className="w-4 h-4 sm:w-[18px] sm:h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          onClick={onFullscreen}
-          className={iconBtn}
-          aria-label={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-          title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-        >
-          {isFullscreen ? (
-            <svg className="w-4 h-4 sm:w-[18px] sm:h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9L4 4m0 0v4m0-4h4M15 9l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4M15 15l5 5m0 0v-4m0 4h-4" />
-            </svg>
-          ) : (
-            <svg className="w-4 h-4 sm:w-[18px] sm:h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-            </svg>
-          )}
-        </button>
+      <div className="footer__right">
+        <div className="footer__icons">
+          <button
+            type="button"
+            className={`Book__navFullScreen ${iconBtn}`}
+            onClick={onFullscreen}
+            name="Fullscreen"
+            aria-label="Fullscreen"
+            title="Fullscreen"
+          >
+            {fullscreenSvg}
+          </button>
+        </div>
       </div>
+
+      <div className="footer__border" aria-hidden="true" />
     </footer>
   );
 }

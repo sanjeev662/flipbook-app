@@ -174,7 +174,7 @@ export default function FlipBook({
           height,
           size: 'fixed',
           drawShadow: true,
-          flippingTime: 700,
+          flippingTime: 850,
           usePortrait: !isWide, // false = landscape = 2-page spread; true = portrait = 1 page
           startPage: Math.max(0, Math.min(currentPage - 1, imageUrls.length - 1)),
           maxShadowOpacity: 0.7,
@@ -324,11 +324,11 @@ export default function FlipBook({
   if (initError && !imageUrls.length) {
     return (
       <motion.div
-        className="flex flex-col items-center justify-center p-8 rounded-2xl text-gray-700"
+        className="flex flex-col items-center justify-center p-8 rounded-2xl [color:var(--flipbook-text-muted)]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <p className="text-lg font-medium mb-2 text-gray-800">Failed to load flipbook</p>
+        <p className="text-lg font-medium mb-2 [color:var(--flipbook-text)]">Failed to load flipbook</p>
         <p className="text-sm opacity-80">{initError}</p>
         <p className="text-xs mt-4 opacity-70">
           Run &quot;npm run convert-pdf&quot; to generate page images from sample.pdf
@@ -398,7 +398,7 @@ export default function FlipBook({
       {imageUrls.length > 0 && !isReady && (
         <div
           className="absolute inset-0 flex items-center justify-center z-[2]"
-          style={{ background: '#e8e2d8' }}
+          style={{ background: 'var(--flipbook-bg)' }}
         >
           <img
             src={imageUrls[Math.max(0, currentPage - 1)] || imageUrls[0]}

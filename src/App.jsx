@@ -248,16 +248,20 @@ function App() {
 
       <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden min-h-0 min-w-0">
         <div className={`w-full h-full flex items-center justify-center relative ${isFullscreen ? 'px-4 sm:px-8' : 'px-2 xs:px-4 sm:px-8 md:px-12 lg:px-16'}`}>
-          {/* Left nav arrow */}
+          {/* Left nav arrow — Previous page, positioned left, points left */}
           <button
             type="button"
             onClick={handlePrev}
             disabled={currentPage <= 1}
-            className="absolute left-0 xs:left-1 sm:left-2 md:left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-gray-600/25 text-gray-800 hover:bg-gray-600/40 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center bg-transparent hover:opacity-70 active:scale-95 disabled:opacity-15 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation"
+            style={{ width: 52, height: 84 }}
             aria-label="Previous page"
           >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            <svg fill="none" stroke="currentColor" strokeWidth={40} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit={15.1181} viewBox="0 0 700 700" style={{ width: 42, height: 68, color: 'var(--flipbook-text)' }}>
+              <g transform="translate(-19.843749,257.14192)">
+                <path d="M218.5,95.1c63.7,93.1,127.5,186.3,191.2,279.4" />
+                <path d="M218.5,95.1l191.2-279.8" />
+              </g>
             </svg>
           </button>
 
@@ -272,16 +276,20 @@ function App() {
             onNextRef={flipNextRef}
           />
 
-          {/* Right nav arrow */}
+          {/* Right nav arrow — Next page, positioned right, points right */}
           <button
             type="button"
             onClick={handleNext}
             disabled={currentPage >= totalPages}
-            className="absolute right-0 xs:right-1 sm:right-2 md:right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 flex items-center justify-center rounded-full bg-gray-600/25 text-gray-800 hover:bg-gray-600/40 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation backdrop-blur-sm min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center bg-transparent hover:opacity-70 active:scale-95 disabled:opacity-15 disabled:cursor-not-allowed transition-all cursor-pointer touch-manipulation"
+            style={{ width: 52, height: 84 }}
             aria-label="Next page"
           >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            <svg fill="none" stroke="currentColor" strokeWidth={40} strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit={15.1181} viewBox="0 0 700 700" style={{ transform: 'scaleX(-1)', width: 42, height: 68, color: 'var(--flipbook-text)' }}>
+              <g transform="translate(-19.843749,257.14192)">
+                <path d="M218.5,95.1c63.7,93.1,127.5,186.3,191.2,279.4" />
+                <path d="M218.5,95.1l191.2-279.8" />
+              </g>
             </svg>
           </button>
         </div>
@@ -292,10 +300,8 @@ function App() {
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChangeWithUrl}
-          onThumbnail={() => setShowThumbnails(true)}
           onFullscreen={handleFullscreen}
           isFullscreen={isFullscreen}
-          isTwoPageSpread={isTwoPageSpread}
         />
       )}
 

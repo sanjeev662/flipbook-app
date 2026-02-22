@@ -30,17 +30,17 @@ export default function Footer({
   };
 
   const iconBtn =
-    'w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center rounded text-gray-600 hover:text-gray-800 hover:bg-black/5 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px]';
+    'w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded text-gray-600 hover:text-gray-800 hover:bg-black/5 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[28px] min-h-[28px] sm:min-w-[32px] sm:min-h-[32px]';
 
   return (
     <footer
-      className="flex items-center justify-between px-2 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 min-h-[40px] sm:min-h-[44px] md:min-h-[48px] gap-1.5 sm:gap-2 md:gap-3 z-30 relative shrink-0"
+      className="flex items-center justify-between px-2 sm:px-4 lg:px-6 py-0.5 sm:py-1 lg:py-1 min-h-[28px] sm:min-h-[36px] lg:min-h-[40px] gap-1 sm:gap-1.5 lg:gap-2 z-30 relative shrink-0"
       style={{
         background: isFullscreen ? 'transparent' : 'rgba(255, 255, 255, 0.55)',
         backdropFilter: isFullscreen ? 'none' : 'blur(12px)',
         WebkitBackdropFilter: isFullscreen ? 'none' : 'blur(12px)',
         borderTop: isFullscreen ? 'none' : '1px solid rgba(0, 0, 0, 0.06)',
-        paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom, 0.375rem))',
+        paddingBottom: 'max(0.25rem, env(safe-area-inset-bottom, 0.25rem))',
       }}
     >
       {/* Page range left */}
@@ -52,7 +52,7 @@ export default function Footer({
       </div>
 
       {/* Slider center */}
-      <div className="flex-1 min-w-0 max-w-xs sm:max-w-md md:max-w-lg mx-1 sm:mx-2">
+      <div className="flex-1 min-w-0 max-w-xs sm:max-w-md lg:max-w-lg mx-1 sm:mx-2">
         <input
           type="range"
           min={1}
@@ -74,7 +74,7 @@ export default function Footer({
           aria-label="Table of contents"
           title="Table of contents"
         >
-          <LayoutGrid className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2} />
+          <LayoutGrid className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
         </button>
         <button
           type="button"
@@ -84,9 +84,9 @@ export default function Footer({
           title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
         >
           {isFullscreen ? (
-            <Minimize className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2} />
+            <Minimize className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
           ) : (
-            <Maximize className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2} />
+            <Maximize className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
           )}
         </button>
       </div>

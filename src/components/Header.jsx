@@ -28,18 +28,19 @@ export default function Header({
 }) {
   // Desktop button
   const iconBtnDesktop =
-    "w-9 h-9 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-800 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[36px] min-h-[36px]";
+    "w-8 h-8 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-800 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[32px] min-h-[32px]";
 
   // Compact button (mobile/tablet)
   const iconBtnCompact =
-    "w-8 h-8 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-800 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[32px] min-h-[32px]";
+    "w-7 h-7 flex items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-800 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[28px] min-h-[28px]";
 
   return (
     <header
       className="
         relative z-30 shrink-0 border-b
         px-2 sm:px-4 lg:px-6
-        py-1.5 sm:py-2 lg:py-2.5
+        py-1 sm:py-1 lg:py-1.5
+        min-h-[32px] sm:min-h-[40px] lg:min-h-[44px]
       "
       style={{
         background: "rgba(255, 255, 255, 0.55)",
@@ -48,7 +49,7 @@ export default function Header({
         borderColor: "rgba(0, 0, 0, 0.06)",
       }}
     >
-      <div className="flex flex-col gap-1.5 lg:hidden">
+      <div className="flex flex-col gap-1 lg:hidden">
         <div className="flex items-center gap-2 min-w-0 w-full">
           {/* Left: Book + Title */}
           <div className="flex items-center gap-2 min-w-0">
@@ -76,7 +77,7 @@ export default function Header({
           </div>
         </div>
         <div className="w-full flex justify-center">
-          <div className="flex flex-nowrap items-center justify-center gap-0.5 sm:gap-1 overflow-hidden">
+          <div className="flex flex-nowrap items-center justify-center gap-0.2 sm:gap-0.5 overflow-hidden">
             <button
               type="button"
               onClick={onThumbnail}
@@ -84,7 +85,7 @@ export default function Header({
               aria-label="Table of contents"
               title="Table of contents"
             >
-              <LayoutGrid className="w-5 h-5" strokeWidth={2} />
+              <LayoutGrid className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
 
             <button
@@ -94,7 +95,7 @@ export default function Header({
               aria-label="Share"
               title="Share"
             >
-              <Share2 className="w-5 h-5" strokeWidth={2} />
+              <Share2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
 
             <button
@@ -104,7 +105,7 @@ export default function Header({
               aria-label="Download PDF"
               title="Download PDF"
             >
-              <Download className="w-5 h-5" strokeWidth={2} />
+              <Download className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
 
             <button
@@ -114,7 +115,7 @@ export default function Header({
               title="Audio"
               onClick={() => {}}
             >
-              <Volume2 className="w-5 h-5" strokeWidth={2} />
+              <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
 
             <button
@@ -124,7 +125,7 @@ export default function Header({
               aria-label="Print"
               title="Print"
             >
-              <Printer className="w-5 h-5" strokeWidth={2} />
+              <Printer className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
 
             <div className="w-px h-4 bg-gray-200 mx-0.5 hidden sm:block" />
@@ -140,7 +141,7 @@ export default function Header({
               aria-label="Zoom out"
               title="Zoom out"
             >
-              <ZoomOut className="w-5 h-5" strokeWidth={2} />
+              <ZoomOut className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
 
             <span className="text-[10px] sm:text-xs text-gray-400 min-w-[34px] sm:min-w-[40px] text-center font-medium select-none tabular-nums">
@@ -158,7 +159,7 @@ export default function Header({
               aria-label="Zoom in"
               title="Zoom in"
             >
-              <ZoomIn className="w-5 h-5" strokeWidth={2} />
+              <ZoomIn className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
 
             <div className="w-px h-4 bg-gray-200 mx-0.5 hidden sm:block" />
@@ -171,16 +172,16 @@ export default function Header({
               title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
             >
               {isFullscreen ? (
-                <Minimize className="w-5 h-5" strokeWidth={2} />
+                <Minimize className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
               ) : (
-                <Maximize className="w-5 h-5" strokeWidth={2} />
+                <Maximize className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
               )}
             </button>
           </div>
         </div>
       </div>
 
-      <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+      <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center gap-1.5">
         {/* Left: Title */}
         <div className="flex items-center gap-2 justify-self-start min-w-0">
           <BookOpen
@@ -193,7 +194,7 @@ export default function Header({
         </div>
 
         {/* Center: Toolbar */}
-        <div className="flex items-center gap-1 justify-self-center">
+        <div className="flex items-center gap-0.2 justify-self-center">
           <button
             type="button"
             onClick={onThumbnail}
@@ -201,7 +202,7 @@ export default function Header({
             aria-label="Table of contents"
             title="Table of contents"
           >
-            <LayoutGrid className="w-6 h-6" strokeWidth={2} />
+            <LayoutGrid className="w-5 h-5" strokeWidth={2} />
           </button>
           <button
             type="button"
@@ -210,7 +211,7 @@ export default function Header({
             aria-label="Share"
             title="Share"
           >
-            <Share2 className="w-6 h-6" strokeWidth={2} />
+            <Share2 className="w-5 h-5" strokeWidth={2} />
           </button>
           <button
             type="button"
@@ -219,7 +220,7 @@ export default function Header({
             aria-label="Download PDF"
             title="Download PDF"
           >
-            <Download className="w-6 h-6" strokeWidth={2} />
+            <Download className="w-5 h-5" strokeWidth={2} />
           </button>
           <button
             type="button"
@@ -228,7 +229,7 @@ export default function Header({
             title="Audio"
             onClick={() => {}}
           >
-            <Volume2 className="w-6 h-6" strokeWidth={2} />
+            <Volume2 className="w-5 h-5" strokeWidth={2} />
           </button>
           <button
             type="button"
@@ -237,7 +238,7 @@ export default function Header({
             aria-label="Print"
             title="Print"
           >
-            <Printer className="w-6 h-6" strokeWidth={2} />
+            <Printer className="w-5 h-5" strokeWidth={2} />
           </button>
 
           <div className="w-px h-5 bg-gray-200 mx-1" />
@@ -253,7 +254,7 @@ export default function Header({
             aria-label="Zoom out"
             title="Zoom out"
           >
-            <ZoomOut className="w-6 h-6" strokeWidth={2} />
+            <ZoomOut className="w-5 h-5" strokeWidth={2} />
           </button>
 
           <span className="text-xs text-gray-400 min-w-[40px] text-center font-medium select-none tabular-nums">
@@ -271,7 +272,7 @@ export default function Header({
             aria-label="Zoom in"
             title="Zoom in"
           >
-            <ZoomIn className="w-6 h-6" strokeWidth={2} />
+            <ZoomIn className="w-5 h-5" strokeWidth={2} />
           </button>
 
           <div className="w-px h-5 bg-gray-200 mx-1" />
@@ -284,9 +285,9 @@ export default function Header({
             title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
           >
             {isFullscreen ? (
-              <Minimize className="w-6 h-6" strokeWidth={2} />
+              <Minimize className="w-5 h-5" strokeWidth={2} />
             ) : (
-              <Maximize className="w-6 h-6" strokeWidth={2} />
+              <Maximize className="w-5 h-5" strokeWidth={2} />
             )}
           </button>
         </div>

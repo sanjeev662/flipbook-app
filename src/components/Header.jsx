@@ -57,13 +57,7 @@ export default function Header({
               strokeWidth={2}
             />
 
-            <h1
-              className="
-      text-xs sm:text-sm font-medium text-gray-700 truncate
-      leading-5 h-5 flex items-center
-      max-w-[65vw]
-    "
-            >
+            <h1 className="text-xs sm:text-sm font-medium text-gray-700 truncate leading-5 h-5 flex items-center max-w-[65vw]">
               {title}
             </h1>
           </div>

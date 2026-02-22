@@ -287,17 +287,15 @@ function App() {
         </div>
       </main>
 
-      {!isFullscreen && (
-        <Footer
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChangeWithUrl}
-          onThumbnail={() => setShowThumbnails(true)}
-          onFullscreen={handleFullscreen}
-          isFullscreen={isFullscreen}
-          isTwoPageSpread={isTwoPageSpread}
-        />
-      )}
+      <Footer
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChangeWithUrl}
+        onThumbnail={() => setShowThumbnails(true)}
+        onFullscreen={handleFullscreen}
+        isFullscreen={isFullscreen}
+        isTwoPageSpread={isTwoPageSpread}
+      />
 
       <ThumbnailModal
         isOpen={showThumbnails}

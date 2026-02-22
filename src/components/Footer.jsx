@@ -34,10 +34,10 @@ export default function Footer({
     <footer
       className="flex items-center justify-between px-2 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 min-h-[40px] sm:min-h-[44px] md:min-h-[48px] gap-1.5 sm:gap-2 md:gap-3 z-30 relative shrink-0"
       style={{
-        background: 'rgba(255, 255, 255, 0.55)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        borderTop: '1px solid rgba(0, 0, 0, 0.06)',
+        background: isFullscreen ? 'transparent' : 'rgba(255, 255, 255, 0.55)',
+        backdropFilter: isFullscreen ? 'none' : 'blur(12px)',
+        WebkitBackdropFilter: isFullscreen ? 'none' : 'blur(12px)',
+        borderTop: isFullscreen ? 'none' : '1px solid rgba(0, 0, 0, 0.06)',
         paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom, 0.375rem))',
       }}
     >

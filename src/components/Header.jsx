@@ -57,7 +57,7 @@ export default function Header({
               strokeWidth={2}
             />
 
-            <h1 className="text-xs sm:text-sm font-medium text-gray-700 truncate leading-5 h-5 flex items-center max-w-[65vw]">
+            <h1 className="text-base sm:text-base font-bold text-gray-500 truncate leading-tight max-w-[65vw]">
               {title}
             </h1>
           </div>
@@ -187,7 +187,7 @@ export default function Header({
             className="w-7 h-7 text-gray-600 shrink-0"
             strokeWidth={2}
           />
-          <h1 className="text-sm font-medium text-gray-700 truncate leading-tight">
+          <h1 className="text-base font-bold text-gray-500 truncate leading-tight">
             {title}
           </h1>
         </div>

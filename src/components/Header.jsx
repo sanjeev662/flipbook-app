@@ -116,7 +116,7 @@ export default function Header({
               title="Download PDF"
             >
               {isDownloading ? (
-                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" strokeWidth={2} />
+                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin pdf-btn-spinner" strokeWidth={2} />
               ) : (
                 <Download className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
               )}
@@ -147,7 +147,7 @@ export default function Header({
               title="Print"
             >
               {isPrinting ? (
-                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" strokeWidth={2} />
+                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin pdf-btn-spinner" strokeWidth={2} />
               ) : (
                 <Printer className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
               )}
@@ -259,7 +259,7 @@ export default function Header({
             title="Download PDF"
           >
             {isDownloading ? (
-              <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2} />
+              <Loader2 className="w-5 h-5 animate-spin pdf-btn-spinner" strokeWidth={2} />
             ) : (
               <Download className="w-5 h-5" strokeWidth={2} />
             )}
@@ -288,7 +288,7 @@ export default function Header({
             title="Print"
           >
             {isPrinting ? (
-              <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2} />
+              <Loader2 className="w-5 h-5 animate-spin pdf-btn-spinner" strokeWidth={2} />
             ) : (
               <Printer className="w-5 h-5" strokeWidth={2} />
             )}

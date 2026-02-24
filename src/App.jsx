@@ -148,6 +148,7 @@ function App() {
     }
     if (isDownloading) return;
     setIsDownloading(true);
+    await new Promise((r) => setTimeout(r, 50));
     try {
       const blob = await generatePdfFromImages(imageUrls);
       const safeName = `${PUBLICATION_TITLE.replace(/[^a-zA-Z0-9-]/g, '-').slice(0, 50)}.pdf`;
@@ -167,6 +168,7 @@ function App() {
     }
     if (isPrinting) return;
     setIsPrinting(true);
+    await new Promise((r) => setTimeout(r, 50));
     try {
       const blob = await generatePdfFromImages(imageUrls);
       printPdfBlob(blob);

@@ -83,6 +83,9 @@ export async function generatePdfFromImages(imageUrls, filename = 'flipbook-docu
     ? null
     : format;
 
+  const yieldToMain = () =>
+    new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
   for (let i = 0; i < loaded.length; i++) {
     const { dataUrl, width, height } = loaded[i];
     if (i > 0) {
@@ -100,8 +103,11 @@ export async function generatePdfFromImages(imageUrls, filename = 'flipbook-docu
 
     const fmt = dataUrl.startsWith('data:image/png') ? 'PNG' : 'JPEG';
     pdf.addImage(dataUrl, fmt, x, y, w, h, undefined, 'FAST');
+
+    await yieldToMain();
   }
 
+  await yieldToMain();
   return pdf.output('blob');
 }
 

@@ -123,7 +123,12 @@ function App() {
   }, [showToast]);
 
   useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement);
+    const handler = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+      // Dispatch a synthetic resize so FlipBook's listener recalculates dimensions
+      // after the fullscreen transition has settled (browser repaints the new viewport).
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+    };
     document.addEventListener('fullscreenchange', handler);
     return () => document.removeEventListener('fullscreenchange', handler);
   }, []);

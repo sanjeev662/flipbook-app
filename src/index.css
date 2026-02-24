@@ -286,6 +286,12 @@ input[type='range']:not(.dark-slider)::-moz-range-thumb {
   border: none;
 }
 
+/* ─── PDF button spinner — keep on compositor layer for smooth spin during heavy work ─── */
+.pdf-btn-spinner {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
 /* ─── Toast animation ─── */
 @keyframes fade-in {
   from { opacity: 0; transform: translate(-50%, 8px); }

@@ -1,15 +1,18 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Volume2, VolumeX } from 'lucide-react';
 import FlipBook from './components/FlipBook';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ThumbnailModal from './components/ThumbnailModal';
 import Loader from './components/Loader';
 import { PUBLICATION_TITLE, getPageFromUrl, updateUrlForPage } from './config';
+import { playPageFlipSound } from './utils/pageFlipSound';
+import { generatePdfFromImages, downloadPdfBlob, printPdfBlob } from './utils/generatePdf';
 
 const ZOOM_MIN = 1;
-const ZOOM_MAX = 2.5;
-const ZOOM_STEP = 0.25;
+const ZOOM_MAX = 3;
+const ZOOM_STEP = 0.2;
 
 function App() {
   const [currentPage, setCurrentPage] = useState(() => getPageFromUrl());
@@ -21,6 +24,16 @@ function App() {
   const [imageUrls, setImageUrls] = useState([]);
   const [isTwoPageSpread, setIsTwoPageSpread] = useState(true);
   const [toast, setToast] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    try {
+      const stored = localStorage.getItem('flipbook-sound-enabled');
+      return stored === null ? true : stored === 'true';
+    } catch {
+      return true;
+    }
+  });
   const pageFlipInstanceRef = useRef(null);
   const flipPrevRef = useRef(null);
   const flipNextRef = useRef(null);
@@ -78,6 +91,24 @@ function App() {
     setZoomLevel((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP));
   }, []);
 
+  const handleResetZoom = useCallback(() => {
+    setZoomLevel(ZOOM_MIN);
+  }, []);
+
+  const handleSoundToggle = useCallback(() => {
+    setSoundEnabled((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('flipbook-sound-enabled', String(next));
+      } catch (_) {}
+      return next;
+    });
+  }, []);
+
+  const handleFlipSound = useCallback(() => {
+    if (soundEnabled) playPageFlipSound();
+  }, [soundEnabled]);
+
   const handleFullscreen = useCallback(() => {
     try {
       if (!document.fullscreenElement) {
@@ -110,20 +141,52 @@ function App() {
     }
   }, [showToast]);
 
-  const handleDownload = useCallback(() => {
-    showToast('No PDF available — flipbook uses images from manifest');
-  }, [showToast]);
-
-  const handlePrint = useCallback(() => {
-    try {
-      window.print?.();
-    } catch {
-      showToast('Print not available');
+  const handleDownload = useCallback(async () => {
+    if (!imageUrls?.length) {
+      showToast('No pages available');
+      return;
     }
-  }, [showToast]);
+    if (isDownloading) return;
+    setIsDownloading(true);
+    await new Promise((r) => setTimeout(r, 50));
+    try {
+      const blob = await generatePdfFromImages(imageUrls);
+      const safeName = `${PUBLICATION_TITLE.replace(/[^a-zA-Z0-9-]/g, '-').slice(0, 50)}.pdf`;
+      downloadPdfBlob(blob, safeName || 'flipbook-document.pdf');
+      showToast('PDF downloaded');
+    } catch (err) {
+      showToast(err?.message || 'Download failed');
+    } finally {
+      setIsDownloading(false);
+    }
+  }, [imageUrls, isDownloading, showToast]);
+
+  const handlePrint = useCallback(async () => {
+    if (!imageUrls?.length) {
+      showToast('No pages available');
+      return;
+    }
+    if (isPrinting) return;
+    setIsPrinting(true);
+    await new Promise((r) => setTimeout(r, 50));
+    try {
+      const blob = await generatePdfFromImages(imageUrls);
+      printPdfBlob(blob);
+      showToast('Opening print dialog…');
+    } catch (err) {
+      showToast(err?.message || 'Print failed');
+    } finally {
+      setIsPrinting(false);
+    }
+  }, [imageUrls, isPrinting, showToast]);
 
   useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement);
+    const handler = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+      // Dispatch a synthetic resize so FlipBook's listener recalculates dimensions
+      // after the fullscreen transition has settled (browser repaints the new viewport).
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+    };
     document.addEventListener('fullscreenchange', handler);
     return () => document.removeEventListener('fullscreenchange', handler);
   }, []);
@@ -208,8 +271,14 @@ function App() {
           onShare={handleShare}
           onDownload={handleDownload}
           onPrint={handlePrint}
+          isDownloading={isDownloading}
+          isPrinting={isPrinting}
+          hasPages={imageUrls?.length > 0}
           onZoomIn={handleZoomIn}
           onZoomOut={handleZoomOut}
+          onResetZoom={handleResetZoom}
+          soundEnabled={soundEnabled}
+          onSoundToggle={handleSoundToggle}
           zoomLevel={zoomLevel}
           zoomMin={ZOOM_MIN}
           zoomMax={ZOOM_MAX}
@@ -218,20 +287,81 @@ function App() {
         />
       )}
 
-      {/* Exit fullscreen button — visible only when fullscreen */}
+      {/* Fullscreen controls — zoom + exit, visible only when fullscreen */}
       {isFullscreen && (
-        <button
-          type="button"
-          onClick={handleFullscreen}
-          className="fixed top-2 right-2 z-50 w-10 h-10 flex items-center justify-center rounded-lg bg-gray-700/60 text-white hover:bg-gray-700/80 active:scale-95 transition-all cursor-pointer backdrop-blur-sm"
-          style={{ top: 'max(0.5rem, env(safe-area-inset-top))', right: 'max(0.5rem, env(safe-area-inset-right))' }}
-          aria-label="Exit fullscreen"
-          title="Exit fullscreen"
+        <div
+          className="fixed top-2 right-2 z-50 flex items-center gap-1 bg-gray-700/60 backdrop-blur-sm"
+          style={{
+            top: 'max(0.5rem, env(safe-area-inset-top))',
+            right: 'max(0.5rem, env(safe-area-inset-right))',
+            padding: '4px 6px',
+            borderRadius: '4px',
+          }}
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="square" strokeLinejoin="miter" viewBox="0 0 24 24">
-            <path d="M9 9L4 4m0 0v4m0-4h4M15 9l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4M15 15l5 5m0 0v-4m0 4h-4" />
-          </svg>
-        </button>
+          <button
+            type="button"
+            onClick={handleZoomOut}
+            disabled={zoomLevel <= ZOOM_MIN}
+            className="w-9 h-9 flex items-center justify-center text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Zoom out"
+            title="Zoom out"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+            </svg>
+          </button>
+          <span className="text-white text-xs font-medium min-w-[36px] text-center tabular-nums">
+            {Math.round(zoomLevel * 100)}%
+          </span>
+          <button
+            type="button"
+            onClick={handleZoomIn}
+            disabled={zoomLevel >= ZOOM_MAX}
+            className="w-9 h-9 flex items-center justify-center text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Zoom in"
+            title="Zoom in"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16M4 12h16" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={handleResetZoom}
+            className="w-9 h-9 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+            aria-label="Reset zoom"
+            title="Reset zoom to 100%"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={handleSoundToggle}
+            className={`w-9 h-9 flex items-center justify-center transition-colors ${soundEnabled ? 'text-white hover:bg-white/20' : 'text-white/50 hover:bg-white/10'}`}
+            aria-label={soundEnabled ? 'Page flip sound on' : 'Page flip sound off'}
+            title={soundEnabled ? 'Page flip sound on (click to turn off)' : 'Page flip sound off (click to turn on)'}
+          >
+            {soundEnabled ? (
+              <Volume2 className="w-5 h-5" strokeWidth={2} />
+            ) : (
+              <VolumeX className="w-5 h-5" strokeWidth={2} />
+            )}
+          </button>
+          <div className="w-px h-6 bg-white/30 mx-1" />
+          <button
+            type="button"
+            onClick={handleFullscreen}
+            className="w-9 h-9 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+            aria-label="Exit fullscreen"
+            title="Exit fullscreen"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path d="M9 9L4 4m0 0v4m0-4h4M15 9l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4M15 15l5 5m0 0v-4m0 4h-4" />
+            </svg>
+          </button>
+        </div>
       )}
 
       <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden min-h-0 min-w-0">
@@ -257,6 +387,7 @@ function App() {
             currentPage={currentPage}
             onPageChange={handlePageChangeWithUrl}
             zoomLevel={zoomLevel}
+            onFlipSound={handleFlipSound}
             onFlipbookReady={handleFlipbookReady}
             onLoadStateChange={handleLoadStateChange}
             onStateChange={handleFlipbookState}

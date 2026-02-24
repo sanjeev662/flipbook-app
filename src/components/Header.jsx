@@ -6,10 +6,13 @@ import {
   Download,
   Printer,
   Volume2,
+  VolumeX,
   ZoomIn,
   ZoomOut,
+  RotateCcw,
   Maximize,
   Minimize,
+  Loader2,
 } from "lucide-react";
 
 export default function Header({
@@ -18,21 +21,27 @@ export default function Header({
   onShare,
   onDownload,
   onPrint,
+  isDownloading = false,
+  isPrinting = false,
+  hasPages = true,
   onZoomIn,
   onZoomOut,
+  onResetZoom,
+  soundEnabled = true,
+  onSoundToggle,
   zoomLevel = 1,
   zoomMin = 1,
-  zoomMax = 2.5,
+  zoomMax = 3,
   onFullscreen,
   isFullscreen,
 }) {
-  // Desktop button
+  // Desktop button — sharp corners (box-style), minimal border
   const iconBtnDesktop =
-    "w-8 h-8 flex items-center justify-center rounded text-gray-600 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[32px] min-h-[32px]";
+    "w-8 h-8 flex items-center justify-center rounded-none text-gray-600 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[32px] min-h-[32px] border border-gray-200/60";
 
   // Compact button (mobile/tablet)
   const iconBtnCompact =
-    "w-7 h-7 flex items-center justify-center rounded text-gray-600 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[28px] min-h-[28px]";
+    "w-7 h-7 flex items-center justify-center rounded-none text-gray-600 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[28px] min-h-[28px] border border-gray-200/60";
 
   return (
     <header
@@ -101,31 +110,47 @@ export default function Header({
             <button
               type="button"
               onClick={onDownload}
-              className={iconBtnCompact}
+              disabled={isDownloading || !hasPages}
+              className={`${iconBtnCompact} disabled:opacity-50 disabled:cursor-not-allowed`}
               aria-label="Download PDF"
               title="Download PDF"
             >
-              <Download className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              {isDownloading ? (
+                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin pdf-btn-spinner" strokeWidth={2} />
+              ) : (
+                <Download className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              )}
             </button>
 
-            <button
-              type="button"
-              className={iconBtnCompact}
-              aria-label="Audio"
-              title="Audio"
-              onClick={() => {}}
-            >
-              <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
-            </button>
+            {onSoundToggle && (
+              <button
+                type="button"
+                onClick={onSoundToggle}
+                className={`${iconBtnCompact} ${!soundEnabled ? 'opacity-50' : ''}`}
+                aria-label={soundEnabled ? 'Page flip sound on' : 'Page flip sound off'}
+                title={soundEnabled ? 'Page flip sound on (click to turn off)' : 'Page flip sound off (click to turn on)'}
+              >
+                {soundEnabled ? (
+                  <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+                ) : (
+                  <VolumeX className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+                )}
+              </button>
+            )}
 
             <button
               type="button"
               onClick={onPrint}
-              className={iconBtnCompact}
+              disabled={isPrinting || !hasPages}
+              className={`${iconBtnCompact} disabled:opacity-50 disabled:cursor-not-allowed`}
               aria-label="Print"
               title="Print"
             >
-              <Printer className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              {isPrinting ? (
+                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin pdf-btn-spinner" strokeWidth={2} />
+              ) : (
+                <Printer className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              )}
             </button>
 
             <div className="w-px h-4 bg-gray-200 mx-0.5 hidden sm:block" />
@@ -161,6 +186,18 @@ export default function Header({
             >
               <ZoomIn className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
+
+            {onResetZoom && (
+              <button
+                type="button"
+                onClick={onResetZoom}
+                className={iconBtnCompact}
+                aria-label="Reset zoom"
+                title="Reset zoom to 100%"
+              >
+                <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              </button>
+            )}
 
             <div className="w-px h-4 bg-gray-200 mx-0.5 hidden sm:block" />
 
@@ -216,29 +253,45 @@ export default function Header({
           <button
             type="button"
             onClick={onDownload}
-            className={iconBtnDesktop}
+            disabled={isDownloading || !hasPages}
+            className={`${iconBtnDesktop} disabled:opacity-50 disabled:cursor-not-allowed`}
             aria-label="Download PDF"
             title="Download PDF"
           >
-            <Download className="w-5 h-5" strokeWidth={2} />
+            {isDownloading ? (
+              <Loader2 className="w-5 h-5 animate-spin pdf-btn-spinner" strokeWidth={2} />
+            ) : (
+              <Download className="w-5 h-5" strokeWidth={2} />
+            )}
           </button>
-          <button
-            type="button"
-            className={iconBtnDesktop}
-            aria-label="Audio"
-            title="Audio"
-            onClick={() => {}}
-          >
-            <Volume2 className="w-5 h-5" strokeWidth={2} />
-          </button>
+          {onSoundToggle && (
+            <button
+              type="button"
+              onClick={onSoundToggle}
+              className={`${iconBtnDesktop} ${!soundEnabled ? 'opacity-50' : ''}`}
+              aria-label={soundEnabled ? 'Page flip sound on' : 'Page flip sound off'}
+              title={soundEnabled ? 'Page flip sound on (click to turn off)' : 'Page flip sound off (click to turn on)'}
+            >
+              {soundEnabled ? (
+                <Volume2 className="w-5 h-5" strokeWidth={2} />
+              ) : (
+                <VolumeX className="w-5 h-5" strokeWidth={2} />
+              )}
+            </button>
+          )}
           <button
             type="button"
             onClick={onPrint}
-            className={iconBtnDesktop}
+            disabled={isPrinting || !hasPages}
+            className={`${iconBtnDesktop} disabled:opacity-50 disabled:cursor-not-allowed`}
             aria-label="Print"
             title="Print"
           >
-            <Printer className="w-5 h-5" strokeWidth={2} />
+            {isPrinting ? (
+              <Loader2 className="w-5 h-5 animate-spin pdf-btn-spinner" strokeWidth={2} />
+            ) : (
+              <Printer className="w-5 h-5" strokeWidth={2} />
+            )}
           </button>
 
           <div className="w-px h-5 bg-gray-200 mx-1" />
@@ -274,6 +327,18 @@ export default function Header({
           >
             <ZoomIn className="w-5 h-5" strokeWidth={2} />
           </button>
+
+          {onResetZoom && (
+            <button
+              type="button"
+              onClick={onResetZoom}
+              className={iconBtnDesktop}
+              aria-label="Reset zoom"
+              title="Reset zoom to 100%"
+            >
+              <RotateCcw className="w-5 h-5" strokeWidth={2} />
+            </button>
+          )}
 
           <div className="w-px h-5 bg-gray-200 mx-1" />
 

@@ -12,6 +12,7 @@ import {
   RotateCcw,
   Maximize,
   Minimize,
+  Loader2,
 } from "lucide-react";
 
 export default function Header({
@@ -20,6 +21,9 @@ export default function Header({
   onShare,
   onDownload,
   onPrint,
+  isDownloading = false,
+  isPrinting = false,
+  hasPages = true,
   onZoomIn,
   onZoomOut,
   onResetZoom,
@@ -106,11 +110,16 @@ export default function Header({
             <button
               type="button"
               onClick={onDownload}
-              className={iconBtnCompact}
+              disabled={isDownloading || !hasPages}
+              className={`${iconBtnCompact} disabled:opacity-50 disabled:cursor-not-allowed`}
               aria-label="Download PDF"
               title="Download PDF"
             >
-              <Download className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              {isDownloading ? (
+                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" strokeWidth={2} />
+              ) : (
+                <Download className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              )}
             </button>
 
             {onSoundToggle && (
@@ -132,11 +141,16 @@ export default function Header({
             <button
               type="button"
               onClick={onPrint}
-              className={iconBtnCompact}
+              disabled={isPrinting || !hasPages}
+              className={`${iconBtnCompact} disabled:opacity-50 disabled:cursor-not-allowed`}
               aria-label="Print"
               title="Print"
             >
-              <Printer className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              {isPrinting ? (
+                <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" strokeWidth={2} />
+              ) : (
+                <Printer className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              )}
             </button>
 
             <div className="w-px h-4 bg-gray-200 mx-0.5 hidden sm:block" />
@@ -239,11 +253,16 @@ export default function Header({
           <button
             type="button"
             onClick={onDownload}
-            className={iconBtnDesktop}
+            disabled={isDownloading || !hasPages}
+            className={`${iconBtnDesktop} disabled:opacity-50 disabled:cursor-not-allowed`}
             aria-label="Download PDF"
             title="Download PDF"
           >
-            <Download className="w-5 h-5" strokeWidth={2} />
+            {isDownloading ? (
+              <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2} />
+            ) : (
+              <Download className="w-5 h-5" strokeWidth={2} />
+            )}
           </button>
           {onSoundToggle && (
             <button
@@ -263,11 +282,16 @@ export default function Header({
           <button
             type="button"
             onClick={onPrint}
-            className={iconBtnDesktop}
+            disabled={isPrinting || !hasPages}
+            className={`${iconBtnDesktop} disabled:opacity-50 disabled:cursor-not-allowed`}
             aria-label="Print"
             title="Print"
           >
-            <Printer className="w-5 h-5" strokeWidth={2} />
+            {isPrinting ? (
+              <Loader2 className="w-5 h-5 animate-spin" strokeWidth={2} />
+            ) : (
+              <Printer className="w-5 h-5" strokeWidth={2} />
+            )}
           </button>
 
           <div className="w-px h-5 bg-gray-200 mx-1" />

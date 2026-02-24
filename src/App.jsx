@@ -8,6 +8,7 @@ import ThumbnailModal from './components/ThumbnailModal';
 import Loader from './components/Loader';
 import { PUBLICATION_TITLE, getPageFromUrl, updateUrlForPage } from './config';
 import { playPageFlipSound } from './utils/pageFlipSound';
+import { generatePdfFromImages, downloadPdfBlob, printPdfBlob } from './utils/generatePdf';
 
 const ZOOM_MIN = 1;
 const ZOOM_MAX = 3;
@@ -23,6 +24,8 @@ function App() {
   const [imageUrls, setImageUrls] = useState([]);
   const [isTwoPageSpread, setIsTwoPageSpread] = useState(true);
   const [toast, setToast] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     try {
       const stored = localStorage.getItem('flipbook-sound-enabled');
@@ -138,17 +141,42 @@ function App() {
     }
   }, [showToast]);
 
-  const handleDownload = useCallback(() => {
-    showToast('No PDF available — flipbook uses images from manifest');
-  }, [showToast]);
-
-  const handlePrint = useCallback(() => {
-    try {
-      window.print?.();
-    } catch {
-      showToast('Print not available');
+  const handleDownload = useCallback(async () => {
+    if (!imageUrls?.length) {
+      showToast('No pages available');
+      return;
     }
-  }, [showToast]);
+    if (isDownloading) return;
+    setIsDownloading(true);
+    try {
+      const blob = await generatePdfFromImages(imageUrls);
+      const safeName = `${PUBLICATION_TITLE.replace(/[^a-zA-Z0-9-]/g, '-').slice(0, 50)}.pdf`;
+      downloadPdfBlob(blob, safeName || 'flipbook-document.pdf');
+      showToast('PDF downloaded');
+    } catch (err) {
+      showToast(err?.message || 'Download failed');
+    } finally {
+      setIsDownloading(false);
+    }
+  }, [imageUrls, isDownloading, showToast]);
+
+  const handlePrint = useCallback(async () => {
+    if (!imageUrls?.length) {
+      showToast('No pages available');
+      return;
+    }
+    if (isPrinting) return;
+    setIsPrinting(true);
+    try {
+      const blob = await generatePdfFromImages(imageUrls);
+      printPdfBlob(blob);
+      showToast('Opening print dialog…');
+    } catch (err) {
+      showToast(err?.message || 'Print failed');
+    } finally {
+      setIsPrinting(false);
+    }
+  }, [imageUrls, isPrinting, showToast]);
 
   useEffect(() => {
     const handler = () => {
@@ -241,6 +269,9 @@ function App() {
           onShare={handleShare}
           onDownload={handleDownload}
           onPrint={handlePrint}
+          isDownloading={isDownloading}
+          isPrinting={isPrinting}
+          hasPages={imageUrls?.length > 0}
           onZoomIn={handleZoomIn}
           onZoomOut={handleZoomOut}
           onResetZoom={handleResetZoom}

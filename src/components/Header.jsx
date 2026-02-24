@@ -8,6 +8,7 @@ import {
   Volume2,
   ZoomIn,
   ZoomOut,
+  RotateCcw,
   Maximize,
   Minimize,
 } from "lucide-react";
@@ -20,19 +21,20 @@ export default function Header({
   onPrint,
   onZoomIn,
   onZoomOut,
+  onResetZoom,
   zoomLevel = 1,
   zoomMin = 1,
-  zoomMax = 2.5,
+  zoomMax = 3,
   onFullscreen,
   isFullscreen,
 }) {
-  // Desktop button
+  // Desktop button — sharp corners (box-style), minimal border
   const iconBtnDesktop =
-    "w-8 h-8 flex items-center justify-center rounded text-gray-600 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[32px] min-h-[32px]";
+    "w-8 h-8 flex items-center justify-center rounded-none text-gray-600 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[32px] min-h-[32px] border border-gray-200/60";
 
   // Compact button (mobile/tablet)
   const iconBtnCompact =
-    "w-7 h-7 flex items-center justify-center rounded text-gray-600 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[28px] min-h-[28px]";
+    "w-7 h-7 flex items-center justify-center rounded-none text-gray-600 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer touch-manipulation min-w-[28px] min-h-[28px] border border-gray-200/60";
 
   return (
     <header
@@ -162,6 +164,18 @@ export default function Header({
               <ZoomIn className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
 
+            {onResetZoom && (
+              <button
+                type="button"
+                onClick={onResetZoom}
+                className={iconBtnCompact}
+                aria-label="Reset zoom"
+                title="Reset zoom to 100%"
+              >
+                <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+              </button>
+            )}
+
             <div className="w-px h-4 bg-gray-200 mx-0.5 hidden sm:block" />
 
             <button
@@ -274,6 +288,18 @@ export default function Header({
           >
             <ZoomIn className="w-5 h-5" strokeWidth={2} />
           </button>
+
+          {onResetZoom && (
+            <button
+              type="button"
+              onClick={onResetZoom}
+              className={iconBtnDesktop}
+              aria-label="Reset zoom"
+              title="Reset zoom to 100%"
+            >
+              <RotateCcw className="w-5 h-5" strokeWidth={2} />
+            </button>
+          )}
 
           <div className="w-px h-5 bg-gray-200 mx-1" />
 

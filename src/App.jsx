@@ -8,8 +8,8 @@ import Loader from './components/Loader';
 import { PUBLICATION_TITLE, getPageFromUrl, updateUrlForPage } from './config';
 
 const ZOOM_MIN = 1;
-const ZOOM_MAX = 2.5;
-const ZOOM_STEP = 0.25;
+const ZOOM_MAX = 3;
+const ZOOM_STEP = 0.2;
 
 function App() {
   const [currentPage, setCurrentPage] = useState(() => getPageFromUrl());
@@ -76,6 +76,10 @@ function App() {
 
   const handleZoomOut = useCallback(() => {
     setZoomLevel((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP));
+  }, []);
+
+  const handleResetZoom = useCallback(() => {
+    setZoomLevel(ZOOM_MIN);
   }, []);
 
   const handleFullscreen = useCallback(() => {
@@ -215,6 +219,7 @@ function App() {
           onPrint={handlePrint}
           onZoomIn={handleZoomIn}
           onZoomOut={handleZoomOut}
+          onResetZoom={handleResetZoom}
           zoomLevel={zoomLevel}
           zoomMin={ZOOM_MIN}
           zoomMax={ZOOM_MAX}
@@ -223,20 +228,68 @@ function App() {
         />
       )}
 
-      {/* Exit fullscreen button — visible only when fullscreen */}
+      {/* Fullscreen controls — zoom + exit, visible only when fullscreen */}
       {isFullscreen && (
-        <button
-          type="button"
-          onClick={handleFullscreen}
-          className="fixed top-2 right-2 z-50 w-10 h-10 flex items-center justify-center rounded-lg bg-gray-700/60 text-white hover:bg-gray-700/80 active:scale-95 transition-all cursor-pointer backdrop-blur-sm"
-          style={{ top: 'max(0.5rem, env(safe-area-inset-top))', right: 'max(0.5rem, env(safe-area-inset-right))' }}
-          aria-label="Exit fullscreen"
-          title="Exit fullscreen"
+        <div
+          className="fixed top-2 right-2 z-50 flex items-center gap-1 bg-gray-700/60 backdrop-blur-sm"
+          style={{
+            top: 'max(0.5rem, env(safe-area-inset-top))',
+            right: 'max(0.5rem, env(safe-area-inset-right))',
+            padding: '4px 6px',
+            borderRadius: '4px',
+          }}
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="square" strokeLinejoin="miter" viewBox="0 0 24 24">
-            <path d="M9 9L4 4m0 0v4m0-4h4M15 9l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4M15 15l5 5m0 0v-4m0 4h-4" />
-          </svg>
-        </button>
+          <button
+            type="button"
+            onClick={handleZoomOut}
+            disabled={zoomLevel <= ZOOM_MIN}
+            className="w-9 h-9 flex items-center justify-center text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Zoom out"
+            title="Zoom out"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+            </svg>
+          </button>
+          <span className="text-white text-xs font-medium min-w-[36px] text-center tabular-nums">
+            {Math.round(zoomLevel * 100)}%
+          </span>
+          <button
+            type="button"
+            onClick={handleZoomIn}
+            disabled={zoomLevel >= ZOOM_MAX}
+            className="w-9 h-9 flex items-center justify-center text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Zoom in"
+            title="Zoom in"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16M4 12h16" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={handleResetZoom}
+            className="w-9 h-9 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+            aria-label="Reset zoom"
+            title="Reset zoom to 100%"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+          <div className="w-px h-6 bg-white/30 mx-1" />
+          <button
+            type="button"
+            onClick={handleFullscreen}
+            className="w-9 h-9 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+            aria-label="Exit fullscreen"
+            title="Exit fullscreen"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path d="M9 9L4 4m0 0v4m0-4h4M15 9l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4M15 15l5 5m0 0v-4m0 4h-4" />
+            </svg>
+          </button>
+        </div>
       )}
 
       <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden min-h-0 min-w-0">

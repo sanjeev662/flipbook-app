@@ -9,7 +9,7 @@ const getBasePath = () => {
 const MANIFEST_URL  = `${getBasePath()}assets/pdf/manifest.json`;
 const PAGES_BASE_URL = `${getBasePath()}assets/pdf/pages`;
 
-const DEBUG = true; // Set to false to silence debug logs
+const DEBUG = false; // Set to true to enable debug logs
 const log    = (...args) => DEBUG && console.log('[FlipBook]', ...args);
 const logErr = (...args) => console.error('[FlipBook]', ...args);
 
@@ -54,6 +54,19 @@ export default function FlipBook({
   const currentPageRef   = useRef(currentPage);
   currentPageRef.current = currentPage;
 
+  // ── Zoom + pan state (when zoom > 1, user can drag to pan) ─────────────────
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+  const viewportRef = useRef({ width: 0, height: 0 });
+
+  // Reset pan when zoom returns to 1
+  useEffect(() => {
+    if (zoomLevel <= 1) setPan({ x: 0, y: 0 });
+  }, [zoomLevel]);
+
+  const isZoomed = zoomLevel > 1;
+
   // ── Book state derived from current page ─────────────────────────────────
   const totalPagesCount = imageUrls.length;
   const pageProgress    = totalPagesCount > 1 ? (currentPage - 1) / (totalPagesCount - 1) : 0;
@@ -78,6 +91,7 @@ export default function FlipBook({
     }
 
     const rect       = el.getBoundingClientRect();
+    viewportRef.current = { width: rect.width, height: rect.height };
     log('updateDimensions: rect=', rect.width, 'x', rect.height, 'measureEl=', !!measureRef.current);
     const isMobile   = window.innerWidth < 1024;
     const hPad       = isMobile ? 40 : 64;
@@ -383,6 +397,93 @@ export default function FlipBook({
     onStateChange?.({ imageUrls, isWide: dimensions.isWide });
   }, [imageUrls, dimensions.isWide, onStateChange]);
 
+  // ── Pan/drag handlers (only active when zoomed) ────────────────────────────
+  const getPanBounds = useCallback(() => {
+    const vp = viewportRef.current;
+    const bookW = clipWidth;
+    const bookH = dimensions.height;
+    const scaledW = bookW * zoomLevel;
+    const scaledH = bookH * zoomLevel;
+    const maxX = Math.max(0, (scaledW - vp.width) / 2);
+    const maxY = Math.max(0, (scaledH - vp.height) / 2);
+    return { maxX, maxY };
+  }, [clipWidth, dimensions.height, zoomLevel]);
+
+  const clampPan = useCallback(
+    (x, y) => {
+      const { maxX, maxY } = getPanBounds();
+      return {
+        x: Math.max(-maxX, Math.min(maxX, x)),
+        y: Math.max(-maxY, Math.min(maxY, y)),
+      };
+    },
+    [getPanBounds],
+  );
+
+  const handlePointerDown = useCallback(
+    (e) => {
+      if (!isZoomed) return;
+      e.preventDefault();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      dragStartRef.current = {
+        x: clientX,
+        y: clientY,
+        panX: pan.x,
+        panY: pan.y,
+      };
+      setIsDragging(true);
+    },
+    [isZoomed, pan.x, pan.y],
+  );
+
+  const handlePointerMove = useCallback(
+    (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const clientX = e.touches ? (e.touches[0]?.clientX ?? e.changedTouches?.[0]?.clientX) : e.clientX;
+      const clientY = e.touches ? (e.touches[0]?.clientY ?? e.changedTouches?.[0]?.clientY) : e.clientY;
+      if (clientX == null || clientY == null) return;
+      const dx = clientX - dragStartRef.current.x;
+      const dy = clientY - dragStartRef.current.y;
+      const next = clampPan(dragStartRef.current.panX + dx, dragStartRef.current.panY + dy);
+      setPan(next);
+    },
+    [isDragging, clampPan],
+  );
+
+  const handlePointerUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const move = (e) => handlePointerMove(e);
+    const up = () => handlePointerUp();
+    document.addEventListener('mousemove', move, { passive: false });
+    document.addEventListener('mouseup', up);
+    document.addEventListener('touchmove', move, { passive: false });
+    document.addEventListener('touchend', up);
+    document.addEventListener('touchcancel', up);
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+    return () => {
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', up);
+      document.removeEventListener('touchmove', move);
+      document.removeEventListener('touchend', up);
+      document.removeEventListener('touchcancel', up);
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isDragging, handlePointerMove, handlePointerUp]);
+
+  // Clamp pan when zoom or dimensions change (bounds may have shrunk)
+  useEffect(() => {
+    if (!isZoomed) return;
+    setPan((p) => clampPan(p.x, p.y));
+  }, [zoomLevel, dimensions.width, dimensions.height, clipWidth, isZoomed]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const hasContent = imageUrls.length > 0;
     onLoadStateChangeRef.current?.({ isLoading: !hasContent && !initError, error: initError, isReady, hasContent });
@@ -431,29 +532,46 @@ export default function FlipBook({
   return (
     <div
       ref={measureRef}
-      className="w-full h-full flex items-center justify-center relative"
+      className="w-full h-full flex items-center justify-center relative overflow-hidden"
       style={{ minHeight: 0 }}
     >
       {/*
-        book-outer
-        ──────────
-        • Applies zoom (scale transform)
-        • Holds page-stack decorations outside the clip wrapper
-        • Width equals clipWidth (single page on cover, double on inner pages)
-        • CSS transition on width so the book "opens up" after the cover flip
+        zoom-pan-wrapper
+        ────────────────
+        • Combines translate(pan) + scale(zoom)
+        • When zoom > 1: grab cursor, capture pointer for drag (disables page flip)
+        • When zoom === 1: normal cursor, events pass through to flip
       */}
       <div
-        className="book-outer"
+        className="flex items-center justify-center"
         style={{
-          position:        'relative',
-          width:           clipWidth,
-          height:          dimensions.height,
-          transform:       `scale(${zoomLevel})`,
+          transform:       `translate(${pan.x}px, ${pan.y}px) scale(${zoomLevel})`,
           transformOrigin: 'center center',
+          transition:      isDragging ? 'none' : 'transform 0.2s ease-out',
+          cursor:          isZoomed ? (isDragging ? 'grabbing' : 'grab') : 'default',
           flexShrink:      0,
           zIndex:          1,
         }}
+        onMouseDown={handlePointerDown}
+        onTouchStart={handlePointerDown}
       >
+        {/*
+          book-outer
+          ──────────
+          • Holds page-stack decorations outside the clip wrapper
+          • Width equals clipWidth (single page on cover, double on inner pages)
+          • CSS transition on width so the book "opens up" after the cover flip
+        */}
+        <div
+          className="book-outer"
+          style={{
+            position:       'relative',
+            width:          clipWidth,
+            height:         dimensions.height,
+            flexShrink:     0,
+            pointerEvents:  isZoomed ? 'none' : 'auto', // When zoomed, wrapper captures all events for pan; flip disabled
+          }}
+        >
         {/* Left page stack (pages already turned) */}
         {isWide && leftStackPx > 1 && (
           <div
@@ -539,6 +657,7 @@ export default function FlipBook({
           {isCover && <div className="book-cover-frame" />}
         </motion.div>
       </div>
+    </div>
 
       {/* Loading overlay — single cover image on transparent background */}
       {imageUrls.length > 0 && !isReady && (

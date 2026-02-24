@@ -21,6 +21,7 @@ export default function FlipBook({
   currentPage,
   onPageChange,
   zoomLevel = 1,
+  onFlipSound,
   onFlipbookReady,
   onLoadStateChange,
   onStateChange,
@@ -172,6 +173,8 @@ export default function FlipBook({
   // ── Manifest load ─────────────────────────────────────────────────────────
   const onLoadStateChangeRef = useRef(onLoadStateChange);
   onLoadStateChangeRef.current = onLoadStateChange;
+  const onFlipSoundRef = useRef(onFlipSound);
+  onFlipSoundRef.current = onFlipSound;
 
   useEffect(() => {
     let cancelled = false;
@@ -281,6 +284,7 @@ export default function FlipBook({
           const page = idx + 1;
           lastReportedPageRef.current = page;
           onPageChange?.(page);
+          onFlipSoundRef.current?.();
           log('flip →', page);
         });
 

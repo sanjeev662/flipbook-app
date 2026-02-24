@@ -6,6 +6,7 @@ import {
   Download,
   Printer,
   Volume2,
+  VolumeX,
   ZoomIn,
   ZoomOut,
   RotateCcw,
@@ -22,6 +23,8 @@ export default function Header({
   onZoomIn,
   onZoomOut,
   onResetZoom,
+  soundEnabled = true,
+  onSoundToggle,
   zoomLevel = 1,
   zoomMin = 1,
   zoomMax = 3,
@@ -110,15 +113,21 @@ export default function Header({
               <Download className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
             </button>
 
-            <button
-              type="button"
-              className={iconBtnCompact}
-              aria-label="Audio"
-              title="Audio"
-              onClick={() => {}}
-            >
-              <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
-            </button>
+            {onSoundToggle && (
+              <button
+                type="button"
+                onClick={onSoundToggle}
+                className={`${iconBtnCompact} ${!soundEnabled ? 'opacity-50' : ''}`}
+                aria-label={soundEnabled ? 'Page flip sound on' : 'Page flip sound off'}
+                title={soundEnabled ? 'Page flip sound on (click to turn off)' : 'Page flip sound off (click to turn on)'}
+              >
+                {soundEnabled ? (
+                  <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+                ) : (
+                  <VolumeX className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
+                )}
+              </button>
+            )}
 
             <button
               type="button"
@@ -236,15 +245,21 @@ export default function Header({
           >
             <Download className="w-5 h-5" strokeWidth={2} />
           </button>
-          <button
-            type="button"
-            className={iconBtnDesktop}
-            aria-label="Audio"
-            title="Audio"
-            onClick={() => {}}
-          >
-            <Volume2 className="w-5 h-5" strokeWidth={2} />
-          </button>
+          {onSoundToggle && (
+            <button
+              type="button"
+              onClick={onSoundToggle}
+              className={`${iconBtnDesktop} ${!soundEnabled ? 'opacity-50' : ''}`}
+              aria-label={soundEnabled ? 'Page flip sound on' : 'Page flip sound off'}
+              title={soundEnabled ? 'Page flip sound on (click to turn off)' : 'Page flip sound off (click to turn on)'}
+            >
+              {soundEnabled ? (
+                <Volume2 className="w-5 h-5" strokeWidth={2} />
+              ) : (
+                <VolumeX className="w-5 h-5" strokeWidth={2} />
+              )}
+            </button>
+          )}
           <button
             type="button"
             onClick={onPrint}

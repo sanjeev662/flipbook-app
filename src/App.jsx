@@ -1,11 +1,13 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Volume2, VolumeX } from 'lucide-react';
 import FlipBook from './components/FlipBook';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ThumbnailModal from './components/ThumbnailModal';
 import Loader from './components/Loader';
 import { PUBLICATION_TITLE, getPageFromUrl, updateUrlForPage } from './config';
+import { playPageFlipSound } from './utils/pageFlipSound';
 
 const ZOOM_MIN = 1;
 const ZOOM_MAX = 3;
@@ -21,6 +23,14 @@ function App() {
   const [imageUrls, setImageUrls] = useState([]);
   const [isTwoPageSpread, setIsTwoPageSpread] = useState(true);
   const [toast, setToast] = useState(null);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    try {
+      const stored = localStorage.getItem('flipbook-sound-enabled');
+      return stored === null ? true : stored === 'true';
+    } catch {
+      return true;
+    }
+  });
   const pageFlipInstanceRef = useRef(null);
   const flipPrevRef = useRef(null);
   const flipNextRef = useRef(null);
@@ -81,6 +91,20 @@ function App() {
   const handleResetZoom = useCallback(() => {
     setZoomLevel(ZOOM_MIN);
   }, []);
+
+  const handleSoundToggle = useCallback(() => {
+    setSoundEnabled((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('flipbook-sound-enabled', String(next));
+      } catch (_) {}
+      return next;
+    });
+  }, []);
+
+  const handleFlipSound = useCallback(() => {
+    if (soundEnabled) playPageFlipSound();
+  }, [soundEnabled]);
 
   const handleFullscreen = useCallback(() => {
     try {
@@ -220,6 +244,8 @@ function App() {
           onZoomIn={handleZoomIn}
           onZoomOut={handleZoomOut}
           onResetZoom={handleResetZoom}
+          soundEnabled={soundEnabled}
+          onSoundToggle={handleSoundToggle}
           zoomLevel={zoomLevel}
           zoomMin={ZOOM_MIN}
           zoomMax={ZOOM_MAX}
@@ -277,6 +303,19 @@ function App() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </button>
+          <button
+            type="button"
+            onClick={handleSoundToggle}
+            className={`w-9 h-9 flex items-center justify-center transition-colors ${soundEnabled ? 'text-white hover:bg-white/20' : 'text-white/50 hover:bg-white/10'}`}
+            aria-label={soundEnabled ? 'Page flip sound on' : 'Page flip sound off'}
+            title={soundEnabled ? 'Page flip sound on (click to turn off)' : 'Page flip sound off (click to turn on)'}
+          >
+            {soundEnabled ? (
+              <Volume2 className="w-5 h-5" strokeWidth={2} />
+            ) : (
+              <VolumeX className="w-5 h-5" strokeWidth={2} />
+            )}
+          </button>
           <div className="w-px h-6 bg-white/30 mx-1" />
           <button
             type="button"
@@ -315,6 +354,7 @@ function App() {
             currentPage={currentPage}
             onPageChange={handlePageChangeWithUrl}
             zoomLevel={zoomLevel}
+            onFlipSound={handleFlipSound}
             onFlipbookReady={handleFlipbookReady}
             onLoadStateChange={handleLoadStateChange}
             onStateChange={handleFlipbookState}
